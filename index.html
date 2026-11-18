@@ -9,203 +9,223 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --noche:#13152A; --noche2:#1B1E3A; --noche3:#252950; --linea:#34396A;
-  --ambar:#F4A940; --coral:#FF5D5D; --menta:#3DDBA0; --papel:#F6F0E4; --tinta:#E9E6F5; --tenue:#9A9CC4;
+  --fondo:#F1EDE4; --papel:#FFFDF8; --tinta:#1C2033; --suave:#5B6075; --linea:#DCD4C4;
+  --navy:#1F2A4D; --acento:#D9781A;
+  --ok:#1D7F55; --okbg:#E2F2E9; --warn:#9A5B00; --warnbg:#FCEFD6; --bad:#B8322B; --badbg:#FBE3E0;
   --display:'Bricolage Grotesque',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%}
-body{
-  background:var(--noche); color:var(--tinta); font-family:var(--display); font-size:16px; line-height:1.45;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 15% -10%, rgba(244,169,64,.13), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(255,93,93,.10), transparent 60%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
-  background-attachment:fixed;
-}
+body{background:var(--fondo);color:var(--tinta);font-family:var(--display);font-size:16px;line-height:1.45}
 button{font-family:inherit;cursor:pointer;border:none}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px}
-.screen{display:none;animation:in .45s ease}
+.wrap{max-width:1200px;margin:0 auto;padding:26px 22px 60px}
+.screen{display:none}
 .screen.on{display:block}
-@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;flex-wrap:wrap;border-bottom:1px solid var(--linea);padding-bottom:14px}
+.marca{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--suave)}
+.marca b{color:var(--acento)}
+.titulo{font-weight:800;font-size:clamp(48px,8vw,100px);line-height:.92;letter-spacing:-.035em;color:var(--navy)}
+.titulo em{font-style:normal;color:var(--acento)}
+.sub{font-family:var(--mono);color:var(--suave);margin-top:14px;font-size:14px}
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:16px;padding:22px}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--suave);margin-bottom:8px}
+.btn{background:var(--navy);color:#fff;font-weight:700;font-size:16px;padding:13px 24px;border-radius:999px}
+.btn:hover{background:#2C3A66}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.alt{background:var(--acento)}
+.btn.ghost{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
+.btn.sm{font-size:14px;padding:9px 16px}
 
-/* ---------- Encabezado neón ---------- */
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
-.marca{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--tenue)}
-.marca b{color:var(--ambar);font-weight:600}
-.neon{
-  font-weight:800;font-size:clamp(46px,8vw,104px);line-height:.9;letter-spacing:-.03em;color:#FFE9C7;
-  text-shadow:0 0 6px rgba(244,169,64,.9),0 0 22px rgba(244,169,64,.55),0 0 60px rgba(255,93,93,.35);
-  animation:flick 7s infinite;
-}
-.neon em{font-style:normal;color:#FFD0D0;text-shadow:0 0 6px rgba(255,93,93,.95),0 0 24px rgba(255,93,93,.6)}
-@keyframes flick{0%,92%,100%{opacity:1}93%{opacity:.55}94%{opacity:1}96%{opacity:.7}97%{opacity:1}}
-.sub{font-family:var(--mono);color:var(--tenue);margin-top:14px;font-size:14px}
+/* Inicio */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:34px;align-items:start}
+.reglas{list-style:none;margin-top:24px;display:grid;gap:12px}
+.reglas li{display:flex;gap:12px;align-items:flex-start}
+.reglas li span{font-family:var(--mono);font-size:12px;color:#fff;background:var(--navy);border-radius:6px;padding:2px 7px;margin-top:2px;flex:none}
+select{width:100%;font-family:var(--display);font-size:17px;padding:13px;border-radius:12px;background:#fff;color:var(--tinta);border:1.5px solid var(--linea);margin-bottom:14px}
+.asig{border:1.5px dashed var(--linea);border-radius:14px;padding:16px;min-height:110px;margin-bottom:16px;display:flex;gap:16px;align-items:center}
+.asig .em{font-size:50px;line-height:1}
+.asig h3{font-size:23px;line-height:1.1;color:var(--navy)}
+.asig p{font-family:var(--mono);font-size:13px;color:var(--suave)}
 
-/* ---------- Tarjetas base ---------- */
-.panel{background:var(--noche2);border:1px solid var(--linea);border-radius:18px;padding:22px}
-.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue);margin-bottom:10px}
-.btn{background:var(--ambar);color:#241606;font-weight:800;font-size:17px;padding:14px 26px;border-radius:999px;transition:transform .15s,box-shadow .15s;box-shadow:0 0 0 rgba(244,169,64,0)}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(244,169,64,.35)}
-.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
-.btn.ghost{background:transparent;color:var(--tinta);border:1px solid var(--linea)}
-.btn.sm{font-size:13px;padding:8px 14px}
-
-/* ---------- Inicio ---------- */
-.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:34px;align-items:start}
-.reglas{list-style:none;margin-top:26px;display:grid;gap:10px}
-.reglas li{display:flex;gap:12px;align-items:flex-start;font-size:15.5px}
-.reglas li span{font-family:var(--mono);font-size:12px;color:var(--noche);background:var(--ambar);border-radius:6px;padding:2px 7px;margin-top:2px;flex:none}
-select{width:100%;font-family:var(--display);font-size:17px;padding:14px;border-radius:12px;background:var(--noche);color:var(--tinta);border:1px solid var(--linea);margin-bottom:16px}
-.asig{border:1px dashed var(--linea);border-radius:14px;padding:18px;min-height:120px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
-.asig .em{font-size:52px;line-height:1}
-.asig h3{font-size:24px;line-height:1.1}
-.asig p{font-family:var(--mono);font-size:13px;color:var(--tenue)}
-
-/* ---------- Ticket (comanda) ---------- */
-.ticket{background:var(--papel);color:#2a2238;border-radius:6px;padding:20px 20px 26px;position:relative;font-family:var(--mono);font-size:13px;
-  -webkit-mask:radial-gradient(circle 7px at 50% 100%,transparent 6.5px,#000 7px) 0 0/18px 100% repeat-x;
-          mask:radial-gradient(circle 7px at 50% 100%,transparent 6.5px,#000 7px) 0 0/18px 100% repeat-x}
-.ticket h4{font-family:var(--display);font-size:22px;line-height:1.1;margin-bottom:4px}
-.ticket hr{border:none;border-top:1px dashed #b9ae9a;margin:12px 0}
-.ticket .fila{display:flex;justify-content:space-between;gap:10px}
-
-/* ---------- Preparación ---------- */
-.prep{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start}
-.opts{display:grid;gap:18px}
+/* Preparación */
+.prep{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+.ficha{background:var(--navy);color:#fff;border-radius:16px;padding:22px}
+.ficha h4{font-size:24px;line-height:1.1;margin:6px 0 2px}
+.ficha .fila{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:13px;padding:6px 0;border-top:1px solid rgba(255,255,255,.15)}
+.ficha p{font-size:13px;opacity:.85;margin-top:10px}
+.opts{display:grid;gap:16px}
 .est-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--linea)}
 .est-row:last-child{border:none}
 .stepper{display:flex;align-items:center;gap:10px;font-family:var(--mono)}
-.stepper button{width:32px;height:32px;border-radius:50%;background:var(--noche3);color:var(--tinta);font-size:18px;font-weight:700}
+.stepper button{width:34px;height:34px;border-radius:50%;background:var(--fondo);color:var(--navy);font-size:19px;font-weight:700;border:1.5px solid var(--linea)}
 .stepper b{min-width:18px;text-align:center;font-size:18px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{background:var(--noche);border:1px solid var(--linea);color:var(--tinta);padding:9px 14px;border-radius:999px;font-size:14px}
-.chip.on{background:var(--ambar);color:#241606;border-color:var(--ambar);font-weight:700}
-.inv{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--linea);border-radius:12px;cursor:pointer;transition:border-color .15s}
-.inv.on{border-color:var(--menta);background:rgba(61,219,160,.07)}
-.inv .box{width:22px;height:22px;border-radius:6px;border:2px solid var(--tenue);flex:none;margin-top:2px;display:grid;place-items:center;font-size:14px;color:var(--noche)}
-.inv.on .box{background:var(--menta);border-color:var(--menta)}
-.inv small{display:block;color:var(--tenue);font-size:13px}
-.inv .precio{font-family:var(--mono);font-size:13px;color:var(--ambar);margin-left:auto;white-space:nowrap}
-.budget{position:sticky;top:12px;z-index:5}
-.barra{height:12px;border-radius:99px;background:var(--noche);overflow:hidden;border:1px solid var(--linea)}
-.barra i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--ambar));transition:width .3s}
-.barra.over i{background:var(--coral)}
+.chip{background:#fff;border:1.5px solid var(--linea);color:var(--tinta);padding:9px 14px;border-radius:999px;font-size:14px}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
+.inv{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1.5px solid var(--linea);border-radius:12px;cursor:pointer;background:#fff}
+.inv.on{border-color:var(--ok);background:var(--okbg)}
+.inv .box{width:22px;height:22px;border-radius:6px;border:2px solid var(--suave);flex:none;margin-top:2px;display:grid;place-items:center;font-size:14px;color:#fff}
+.inv.on .box{background:var(--ok);border-color:var(--ok)}
+.inv small{display:block;color:var(--suave);font-size:13px}
+.inv .precio{font-family:var(--mono);font-size:13px;color:var(--navy);margin-left:auto;white-space:nowrap}
+.barra{height:10px;border-radius:99px;background:var(--fondo);overflow:hidden;border:1px solid var(--linea)}
+.barra i{display:block;height:100%;background:var(--ok);transition:width .4s}
+.barra.over i{background:var(--bad)}
 
-/* ---------- Juego ---------- */
-.hud{display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:14px;align-items:stretch;margin-bottom:18px}
-.hud .panel{padding:14px 16px}
-.reloj{font-family:var(--mono);font-size:34px;font-weight:600;color:#FFE9C7;text-shadow:0 0 14px rgba(244,169,64,.6);line-height:1}
-.reloj small{display:block;font-size:11px;color:var(--tenue);text-shadow:none;letter-spacing:.12em;margin-top:6px}
-.big{font-size:28px;font-weight:800;line-height:1}
-.estrellas{color:var(--ambar);letter-spacing:2px}
-.pool{display:flex;flex-direction:column;gap:8px;justify-content:center}
+/* Juego: tablero */
+.hud{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:12px;margin-bottom:14px}
+.hud .panel{padding:12px 16px}
+.hud .val{font-size:26px;font-weight:800;line-height:1.05;color:var(--navy)}
+#hCost{font-size:22px;white-space:nowrap}
+.hud .val small{font-size:13px;font-weight:400;color:var(--suave);font-family:var(--mono)}
+.reloj{font-family:var(--mono);font-weight:600}
+.estrellas{color:var(--acento);letter-spacing:1px;font-size:18px}
+.foco{display:flex;gap:14px;align-items:center;border-radius:14px;padding:14px 18px;margin-bottom:14px;font-size:17px;border:2px solid transparent;transition:background-color .6s,border-color .6s}
+.foco .ic{font-size:26px;flex:none}
+.foco b{font-weight:800}
+.foco.ok{background:var(--okbg);border-color:#B9DEC8}
+.foco.warn{background:var(--warnbg);border-color:#EFCF96}
+.foco.bad{background:var(--badbg);border-color:#EBA9A2}
 .stations{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.station{background:var(--noche2);border:1px solid var(--linea);border-radius:18px;padding:14px;min-height:380px;display:flex;flex-direction:column;gap:10px}
-.station.lento{border-color:var(--coral);box-shadow:0 0 0 1px var(--coral) inset}
-.st-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.st-head h3{font-size:18px;line-height:1.1}
-.staff{display:flex;gap:5px;flex-wrap:wrap;min-height:18px}
-.staff i{width:16px;height:16px;border-radius:50%;background:var(--menta);box-shadow:0 0 8px rgba(61,219,160,.6)}
-.staff i.libre{background:transparent;border:2px solid var(--menta);box-shadow:none}
-.zona{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--tenue)}
-.cli{background:var(--papel);color:#2a2238;border-radius:8px;padding:7px 10px;font-family:var(--mono);font-size:12px;display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center;animation:slide .35s ease}
-@keyframes slide{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
-.cli .ic{font-size:18px;grid-row:span 2}
-.cli .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pb{height:5px;border-radius:9px;background:#ddd2bf;overflow:hidden}
-.pb i{display:block;height:100%;background:var(--menta)}
-.pb.warn i{background:var(--ambar)} .pb.bad i{background:var(--coral)}
-.cli.srv{background:#DFF7EC}
-.cli.srv .pb i{background:#1f9e6e}
-.mas{font-family:var(--mono);font-size:12px;color:var(--coral)}
-.log{margin-top:16px;font-family:var(--mono);font-size:12.5px;max-height:120px;overflow:auto;display:flex;flex-direction:column-reverse;gap:4px;color:var(--tenue)}
-.log .b{color:var(--menta)} .log .m{color:var(--coral)} .log .a{color:var(--ambar)}
+.station{background:var(--papel);border:2px solid var(--linea);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;transition:border-color .6s}
+.station.warn{border-color:#E9C27A}
+.station.bad{border-color:#E08C84}
+.st-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.st-top h3{font-size:19px;line-height:1.1;color:var(--navy)}
+.estado{font-family:var(--mono);font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.estado.ok{background:var(--okbg);color:var(--ok)} .estado.warn{background:var(--warnbg);color:var(--warn)} .estado.bad{background:var(--badbg);color:var(--bad)}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nums div{background:var(--fondo);border-radius:10px;padding:8px 10px}
+.nums b{display:block;font-size:30px;line-height:1;font-weight:800;color:var(--navy)}
+.nums small{font-family:var(--mono);font-size:11px;color:var(--suave);text-transform:uppercase;letter-spacing:.08em}
+.staffctl{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.staffctl button{background:#fff;border:1.5px solid var(--navy);color:var(--navy);font-weight:700;border-radius:10px;padding:8px 12px;font-size:14px}
+.staffctl button:hover{background:var(--navy);color:#fff}
+.staffctl span{text-align:center;font-family:var(--mono);font-size:13px}
+.lista{display:flex;flex-direction:column;gap:5px;min-height:150px}
+.row{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;padding:7px 10px;border-radius:9px;background:#fff;border:1px solid var(--linea);font-size:14px}
+.row .ic{font-size:17px;text-align:center}
+.row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .nm small{color:var(--suave);font-family:var(--mono);font-size:11px;margin-left:4px}
+.row .t{font-family:var(--mono);font-size:13px;font-weight:600;min-width:46px;text-align:right}
+.row.srv{background:var(--okbg);border-color:#B9DEC8}
+.row.srv .t{color:var(--ok)}
+.row.warn .t{color:var(--warn)} .row.bad{background:var(--badbg);border-color:#EBA9A2} .row.bad .t{color:var(--bad)}
+.mas{font-family:var(--mono);font-size:12px;color:var(--bad);padding-left:4px}
+.sep{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--suave);margin-top:4px}
+.eventos{margin-top:14px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
+.eventos ul{list-style:none;font-family:var(--mono);font-size:13px;color:var(--suave);display:grid;gap:3px}
+.eventos li.m{color:var(--bad)} .eventos li.b{color:var(--ok)} .eventos li.a{color:var(--navy)}
 
-/* ---------- Cacaito ---------- */
-.cacaito{width:84px;height:auto;flex:none;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
-.dock{position:fixed;right:18px;bottom:18px;display:flex;align-items:flex-end;gap:8px;z-index:20;max-width:380px;pointer-events:none}
-.bocadillo{background:var(--papel);color:#2a2238;border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);opacity:0;transform:translateY(8px);transition:.3s}
-.bocadillo.on{opacity:1;transform:none}
+/* Cacaito */
+.cacaito{width:80px;height:auto;flex:none}
+.dock{position:fixed;right:16px;bottom:16px;display:flex;align-items:flex-end;gap:8px;z-index:20;max-width:380px;pointer-events:none}
+.bocadillo{background:#fff;border:1.5px solid var(--linea);color:var(--tinta);border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.12);opacity:0;transition:opacity .4s}
+.bocadillo.on{opacity:1}
 
-/* ---------- Modal ---------- */
-.veil{position:fixed;inset:0;background:rgba(8,9,20,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:18px}
+/* Modal */
+.veil{position:fixed;inset:0;background:rgba(28,32,51,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:18px}
 .veil.on{display:flex}
-.modal{background:var(--noche2);border:1px solid var(--linea);border-radius:22px;max-width:640px;width:100%;padding:26px;animation:in .3s ease;max-height:92vh;overflow:auto}
-.modal .tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:rgba(255,93,93,.15);color:var(--coral);margin-bottom:10px}
-.modal h3{font-size:24px;line-height:1.15;margin-bottom:8px}
+.modal{background:var(--papel);border-radius:20px;max-width:640px;width:100%;padding:26px;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal .tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:var(--warnbg);color:var(--warn);margin-bottom:10px}
+.modal h3{font-size:24px;line-height:1.15;margin-bottom:8px;color:var(--navy)}
 .modal .sit{display:flex;gap:14px;align-items:flex-start;margin:12px 0 18px}
-.modal .sit p{font-size:16.5px}
-.op{display:block;width:100%;text-align:left;background:var(--noche);border:1px solid var(--linea);color:var(--tinta);border-radius:14px;padding:14px 16px;margin-bottom:10px;font-size:15.5px;transition:border-color .15s,transform .15s}
-.op:hover{border-color:var(--ambar);transform:translateX(3px)}
-.op b{font-family:var(--mono);color:var(--ambar);margin-right:8px}
-.op small{display:block;color:var(--tenue);font-family:var(--mono);font-size:12px;margin-top:3px}
-.fb{border-left:3px solid var(--ambar);padding:10px 14px;background:rgba(244,169,64,.07);border-radius:0 12px 12px 0;margin-bottom:16px;font-size:15px}
+.modal .sit p{font-size:17px}
+.op{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--linea);color:var(--tinta);border-radius:14px;padding:14px 16px;margin-bottom:10px;font-size:15.5px}
+.op:hover{border-color:var(--navy)}
+.op b{font-family:var(--mono);color:var(--acento);margin-right:8px}
+.op small{display:block;color:var(--suave);font-family:var(--mono);font-size:12px;margin-top:3px}
+.fb{border-left:4px solid var(--acento);padding:10px 14px;background:var(--warnbg);border-radius:0 12px 12px 0;margin-bottom:16px;font-size:15.5px}
 
-/* ---------- Final ---------- */
+/* Final */
 .final{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
-.score{font-size:clamp(64px,10vw,120px);font-weight:800;line-height:.9;color:#FFE9C7;text-shadow:0 0 22px rgba(244,169,64,.5)}
+.score{font-size:clamp(70px,10vw,120px);font-weight:800;line-height:.9;color:var(--navy)}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
-.kpi{background:var(--noche);border:1px solid var(--linea);border-radius:12px;padding:10px}
-.kpi b{display:block;font-size:20px}
-.kpi span{font-family:var(--mono);font-size:10.5px;color:var(--tenue);text-transform:uppercase;letter-spacing:.1em}
-.gmaps{background:#fff;color:#202124;border-radius:14px;padding:16px 18px;font-family:Roboto,Arial,sans-serif;margin-bottom:12px}
+.kpi{background:var(--papel);border:1px solid var(--linea);border-radius:12px;padding:10px}
+.kpi b{display:block;font-size:20px;color:var(--navy)}
+.kpi span{font-family:var(--mono);font-size:10.5px;color:var(--suave);text-transform:uppercase;letter-spacing:.08em}
+.envio{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;font-size:15px;margin:16px 0}
+.envio.ok{background:var(--okbg);color:var(--ok)} .envio.wait{background:var(--fondo);color:var(--suave)} .envio.bad{background:var(--badbg);color:var(--bad)}
+.code{font-family:var(--mono);font-size:12px;word-break:break-all;background:#fff;border:1px dashed var(--suave);border-radius:10px;padding:10px;margin-top:8px}
+.gmaps{background:#fff;color:#202124;border:1px solid #e3e3e3;border-radius:14px;padding:16px 18px;font-family:Roboto,Arial,sans-serif;margin-bottom:12px}
 .gm-h{display:flex;gap:12px;align-items:center;margin-bottom:6px}
 .av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700}
 .gm-h b{font-size:14px;display:block} .gm-h small{font-size:12px;color:#70757a}
 .gm-st{color:#fbbc04;font-size:15px;letter-spacing:1px} .gm-st span{color:#70757a;font-size:12px;letter-spacing:0;margin-left:6px}
 .gmaps p{font-size:14px;line-height:1.5;margin-top:6px}
-.deb{display:grid;gap:12px}
-.deb .it{border:1px solid var(--linea);border-radius:14px;padding:14px;background:var(--noche)}
-.deb .it .t{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ambar)}
+.deb{display:grid;gap:10px}
+.deb .it{border:1px solid var(--linea);border-radius:14px;padding:14px;background:#fff}
+.deb .it .t{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acento)}
 .deb .it h5{font-size:16px;margin:4px 0}
-.deb .it p{font-size:14.5px;color:#cfd0ea}
-.ok{color:var(--menta)} .ko{color:var(--coral)}
-.code{font-family:var(--mono);font-size:12px;word-break:break-all;background:var(--noche);border:1px dashed var(--ambar);border-radius:12px;padding:14px;color:#FFE9C7;margin:10px 0}
-.refs{font-size:13px;color:var(--tenue);margin-top:10px}
+.deb .it p{font-size:14.5px;color:#3A3F55}
+.ok{color:var(--ok)} .ko{color:var(--bad)}
+.refs{font-size:13px;color:var(--suave);margin-top:10px}
 .refs p{padding-left:2em;text-indent:-2em;margin-bottom:6px}
-footer{margin-top:40px;font-family:var(--mono);font-size:12px;color:var(--tenue);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--linea);padding-top:16px}
-footer a{color:var(--tenue)}
+footer{margin-top:40px;font-family:var(--mono);font-size:12px;color:var(--suave);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--linea);padding-top:16px}
+footer a{color:var(--suave)}
 
-/* ---------- Panel docente ---------- */
-textarea{width:100%;min-height:160px;background:var(--noche);color:var(--tinta);border:1px solid var(--linea);border-radius:12px;padding:12px;font-family:var(--mono);font-size:12px}
-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:16px}
-th{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--tenue);text-align:left;padding:8px;border-bottom:1px solid var(--linea)}
-td{padding:9px 8px;border-bottom:1px solid var(--linea)}
-tr.gold td:first-child{color:var(--ambar);font-weight:800}
+/* Ranking */
+.rk-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.rk-stats{display:flex;gap:12px}
+.rk-stats .panel{padding:12px 18px;text-align:center}
+.rk-stats b{display:block;font-size:34px;color:var(--navy);line-height:1}
+.rk{display:grid;gap:8px}
+.rk-row{display:grid;grid-template-columns:60px 1fr 1.2fr 110px 90px;gap:14px;align-items:center;background:var(--papel);border:1px solid var(--linea);border-radius:14px;padding:12px 18px;font-size:18px}
+.rk-row .pos{font-family:var(--mono);font-weight:600;font-size:22px;color:var(--suave)}
+.rk-row .nm{font-weight:700;color:var(--navy)}
+.rk-row .ng{color:var(--suave);font-size:15px}
+.rk-row .pt{font-size:30px;font-weight:800;color:var(--navy);text-align:right}
+.rk-row .st{font-family:var(--mono);font-size:14px;color:var(--acento);text-align:right}
+.rk-row.top1{background:#FFF4E2;border-color:#EFC27E}
+.rk-row.top1 .pos,.rk-row.top2 .pos,.rk-row.top3 .pos{color:var(--acento)}
+.pend{font-family:var(--mono);font-size:13px;color:var(--suave);margin-top:18px}
+
+/* Informe PDF (fuera de pantalla) */
+#informe{position:absolute;left:-10000px;top:0;width:760px;background:#fff;color:#1C2033;font-family:var(--display);padding:0}
+#informe .pg{padding:34px 40px;width:760px;background:#fff;color:#1C2033;font-family:var(--display)}
+#informe h1{font-size:30px;color:#1F2A4D;line-height:1.1}
+#informe h2{font-size:15px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#D9781A;margin:22px 0 8px}
+#informe .cab{display:flex;justify-content:space-between;border-bottom:3px solid #1F2A4D;padding-bottom:12px;margin-bottom:16px;font-family:var(--mono);font-size:11px;color:#5B6075}
+#informe .big{display:flex;gap:24px;align-items:center;margin:8px 0 6px}
+#informe .big b{font-size:64px;color:#1F2A4D;line-height:1}
+#informe table{width:100%;border-collapse:collapse;font-size:13px}
+#informe td{border:1px solid #DCD4C4;padding:7px 9px;vertical-align:top}
+#informe td:first-child{background:#F1EDE4;font-weight:700;width:34%}
+#informe .it{border-left:3px solid #DCD4C4;padding:6px 12px;margin-bottom:8px;font-size:13px;page-break-inside:avoid}
+#informe .it.ok{border-color:#1D7F55} #informe .it.ko{border-color:#B8322B}
+#informe .it b{display:block;color:#1F2A4D}
+#informe .rv{font-size:13px;border:1px solid #e3e3e3;border-radius:8px;padding:8px 10px;margin-bottom:8px;page-break-inside:avoid}
+#informe .refs p{font-size:11px}
 
 @media (max-width:900px){
   .hero,.prep,.final{grid-template-columns:1fr}
   .hud{grid-template-columns:1fr 1fr}
   .stations{grid-template-columns:1fr}
-  .station{min-height:auto}
   .kpis{grid-template-columns:repeat(2,1fr)}
+  .rk-row{grid-template-columns:44px 1fr 80px;font-size:15px}
+  .rk-row .ng,.rk-row .st{display:none}
 }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 
-<!-- Cacaito (plantilla SVG reutilizable) -->
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <linearGradient id="vaina" x1="0" x2="1" y1="0" y2="1">
       <stop offset="0" stop-color="#E0913A"/><stop offset=".55" stop-color="#B8612A"/><stop offset="1" stop-color="#7A3A1C"/>
     </linearGradient>
     <symbol id="cacaito" viewBox="0 0 120 150">
-      <ellipse cx="60" cy="144" rx="30" ry="5" fill="#000" opacity=".25"/>
+      <ellipse cx="60" cy="144" rx="30" ry="5" fill="#000" opacity=".15"/>
       <path d="M60 14 C92 18 104 60 100 92 C96 124 78 140 60 140 C42 140 24 124 20 92 C16 60 28 18 60 14Z" fill="url(#vaina)"/>
       <path d="M60 18 C56 60 56 100 60 138 M42 24 C32 60 34 104 46 134 M78 24 C88 60 86 104 74 134" stroke="#6B3218" stroke-width="2.4" fill="none" opacity=".45"/>
       <path d="M58 14 C56 6 62 2 68 4" stroke="#4E6B2A" stroke-width="4" fill="none" stroke-linecap="round"/>
       <path d="M66 6 C74 0 84 4 82 10 C76 12 70 10 66 6Z" fill="#6E9A3A"/>
-      <!-- gorra de supervisor -->
-      <path d="M34 38 C40 22 80 22 86 38 Z" fill="#1B1E3A"/>
-      <rect x="30" y="36" width="60" height="7" rx="3.5" fill="#F4A940"/>
-      <!-- auricular -->
-      <path d="M26 66 C24 50 32 42 40 40" stroke="#1B1E3A" stroke-width="3" fill="none"/>
-      <circle cx="26" cy="70" r="6" fill="#1B1E3A"/>
-      <path d="M28 74 C32 84 40 88 46 88" stroke="#1B1E3A" stroke-width="2.4" fill="none"/>
-      <circle cx="47" cy="88" r="3" fill="#FF5D5D"/>
-      <!-- cara -->
+      <path d="M34 38 C40 22 80 22 86 38 Z" fill="#1F2A4D"/>
+      <rect x="30" y="36" width="60" height="7" rx="3.5" fill="#D9781A"/>
+      <path d="M26 66 C24 50 32 42 40 40" stroke="#1F2A4D" stroke-width="3" fill="none"/>
+      <circle cx="26" cy="70" r="6" fill="#1F2A4D"/>
+      <path d="M28 74 C32 84 40 88 46 88" stroke="#1F2A4D" stroke-width="2.4" fill="none"/>
+      <circle cx="47" cy="88" r="3" fill="#B8322B"/>
       <ellipse cx="48" cy="70" rx="8" ry="9.5" fill="#fff"/><ellipse cx="74" cy="70" rx="8" ry="9.5" fill="#fff"/>
       <circle cx="50" cy="72" r="4.4" fill="#241606"/><circle cx="76" cy="72" r="4.4" fill="#241606"/>
       <circle cx="51.6" cy="70" r="1.5" fill="#fff"/><circle cx="77.6" cy="70" r="1.5" fill="#fff"/>
@@ -216,85 +236,80 @@ tr.gold td:first-child{color:var(--ambar);font-weight:800}
 </svg>
 
 <div class="wrap">
-
   <div class="top">
     <div class="marca"><b>UAM</b> · Marketing de Servicios · MSc. Erick Ríos</div>
     <div class="marca" id="topInfo"></div>
   </div>
 
-  <!-- ================= INICIO ================= -->
+  <!-- INICIO -->
   <section class="screen on" id="s-start">
     <div class="hero">
       <div>
-        <div class="neon">Turno<br>de <em>noche</em></div>
+        <div class="titulo">Turno<br>de <em>noche</em></div>
         <p class="sub">Simulador de gerencia de servicios · 6 horas que definen tu reputación</p>
         <ul class="reglas">
-          <li><span>01</span><div>Te toca dirigir <b>un negocio de servicios real</b> durante un turno completo. Nadie más de la clase tiene tu mismo negocio.</div></li>
-          <li><span>02</span><div>Antes de abrir, <b>prepará el turno</b>: personal por estación, música, iluminación e inversiones. Tenés un presupuesto limitado.</div></li>
-          <li><span>03</span><div>Durante el turno entran clientes con distintos perfiles. Si esperan demasiado, <b>se van molestos</b>. Mové a tu personal para que no pase.</div></li>
-          <li><span>04</span><div>Van a aparecer <b>imprevistos y decisiones difíciles</b>. Cada decisión cambia la satisfacción y el costo.</div></li>
-          <li><span>05</span><div>Al cierre vas a ver las <b>reseñas</b> que dejaron tus clientes y un <b>código de resultado</b> que tenés que pegar en Moodle.</div></li>
+          <li><span>01</span><div>Vas a dirigir <b>un negocio de servicios</b> durante un turno completo. Nadie más de la clase tiene tu mismo negocio.</div></li>
+          <li><span>02</span><div>Antes de abrir, <b>prepará el turno</b>: personal por estación, música, iluminación e inversiones, con un presupuesto limitado.</div></li>
+          <li><span>03</span><div>Durante el turno, la <b>franja de arriba te dice dónde mirar</b>. Cada estación muestra su estado: <b class="ok">En orden</b>, <b style="color:var(--warn)">Cargada</b> o <b class="ko">Saturada</b>.</div></li>
+          <li><span>04</span><div>Mové personal con <b>+ Asignar</b> y <b>− Quitar</b>. Cada cliente muestra cuántos segundos le quedan antes de irse.</div></li>
+          <li><span>05</span><div>Al cerrar, tu resultado <b>se registra solo en el ranking</b> y podés <b>descargar tu informe en PDF</b>.</div></li>
         </ul>
       </div>
       <div class="panel">
         <div class="lbl">¿Quién gerencia hoy?</div>
         <select id="selEst"><option value="">— Elegí tu nombre —</option></select>
-        <div class="asig" id="asig"><p style="font-family:var(--mono);color:var(--tenue)">Tu negocio asignado va a aparecer aquí.</p></div>
-        <button class="btn" id="btnStart" disabled>Abrir el negocio →</button>
-        <p class="sub" style="font-size:12px;margin-top:14px">Consejo: jugalo en computadora, con pantalla completa y sin prisa. El turno dura cerca de 8–10 minutos.</p>
+        <div class="asig" id="asig"><p>Tu negocio asignado va a aparecer aquí.</p></div>
+        <button class="btn alt" id="btnStart" disabled>Abrir el negocio →</button>
+        <p class="sub" style="font-size:12px;margin-top:14px">Jugalo en computadora. El turno dura cerca de 10 minutos y se pausa en cada decisión.</p>
       </div>
     </div>
   </section>
 
-  <!-- ================= PREPARACIÓN ================= -->
+  <!-- PREPARACIÓN -->
   <section class="screen" id="s-prep">
     <div class="prep">
       <div style="display:grid;gap:16px">
-        <div class="ticket" id="prepTicket"></div>
-        <div class="panel budget">
+        <div class="ficha" id="prepFicha"></div>
+        <div class="panel">
           <div class="lbl">Presupuesto del turno</div>
-          <div class="fila" style="display:flex;justify-content:space-between;font-family:var(--mono);margin-bottom:8px"><span id="bGast">C$ 0</span><span id="bTot">de C$ 0</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:var(--mono);margin-bottom:8px"><span id="bGast">C$ 0</span><span id="bTot">de C$ 0</span></div>
           <div class="barra" id="bBar"><i style="width:0"></i></div>
           <p class="sub" style="font-size:12px;margin-top:10px" id="bNota"></p>
-          <button class="btn" style="width:100%;margin-top:14px" id="btnAbrir">Abrir puertas 🔓</button>
+          <button class="btn alt" style="width:100%;margin-top:14px" id="btnAbrir">Abrir puertas</button>
         </div>
       </div>
       <div class="opts">
+        <div class="panel"><div class="lbl">1 · Personal por estación (C$ 1,200 por persona)</div><div id="prepStaff"></div></div>
         <div class="panel">
-          <div class="lbl">1 · Personal por estación <span style="text-transform:none;letter-spacing:0">(C$ 1,200 por persona)</span></div>
-          <div id="prepStaff"></div>
+          <div class="lbl">2 · Ambiente: música</div><div class="chips" id="chMus"></div>
+          <div class="lbl" style="margin-top:18px">3 · Ambiente: iluminación</div><div class="chips" id="chLuz"></div>
         </div>
-        <div class="panel">
-          <div class="lbl">2 · Ambiente: música</div>
-          <div class="chips" id="chMus"></div>
-          <div class="lbl" style="margin-top:18px">3 · Ambiente: iluminación</div>
-          <div class="chips" id="chLuz"></div>
-        </div>
-        <div class="panel">
-          <div class="lbl">4 · Inversiones en tu gente y tu espacio</div>
-          <div style="display:grid;gap:10px" id="prepInv"></div>
-        </div>
+        <div class="panel"><div class="lbl">4 · Inversiones en tu gente y tu espacio</div><div style="display:grid;gap:10px" id="prepInv"></div></div>
       </div>
     </div>
   </section>
 
-  <!-- ================= JUEGO ================= -->
+  <!-- JUEGO -->
   <section class="screen" id="s-game">
     <div class="hud">
-      <div class="panel"><div class="reloj" id="hClock">--:--</div><small class="reloj" style="font-size:11px" id="hHora"></small></div>
-      <div class="panel"><div class="lbl">Satisfacción</div><div class="big"><span id="hSat">—</span> <span class="estrellas" id="hStars"></span></div></div>
-      <div class="panel"><div class="lbl">Costo / presupuesto</div><div class="big" style="font-size:20px;font-family:var(--mono)" id="hCost">C$ 0</div><div class="barra" style="margin-top:8px" id="hBar"><i></i></div></div>
-      <div class="panel"><div class="lbl">Atendidos · Perdidos</div><div class="big"><span class="ok" id="hSrv">0</span> · <span class="ko" id="hLost">0</span></div></div>
-      <div class="panel pool">
-        <div class="lbl" style="margin:0">Personal libre: <b id="hPool" style="color:var(--menta)">0</b></div>
+      <div class="panel"><div class="lbl">Hora</div><div class="val reloj" id="hClock">--</div><small class="marca" id="hHora"></small></div>
+      <div class="panel"><div class="lbl">Satisfacción</div><div class="val"><span id="hSat">—</span> <span class="estrellas" id="hStars"></span></div></div>
+      <div class="panel"><div class="lbl">Gasto</div><div class="val" id="hCost">C$ 0</div><div class="barra" style="margin-top:6px" id="hBar"><i></i></div></div>
+      <div class="panel"><div class="lbl">Atendidos · Se fueron</div><div class="val"><span class="ok" id="hSrv">0</span> · <span class="ko" id="hLost">0</span></div></div>
+      <div class="panel" style="display:grid;gap:6px;align-content:center">
+        <div class="lbl" style="margin:0">Personal libre: <b id="hPool" style="color:var(--ok);font-size:15px">0</b></div>
         <button class="btn sm" id="btnRef">+ Refuerzo C$ 1,000</button>
       </div>
     </div>
+    <div class="foco ok" id="foco"><span class="ic">✅</span><div id="focoTxt">Todo en orden.</div></div>
     <div class="stations" id="stations"></div>
-    <div class="log" id="log"></div>
+    <div class="eventos">
+      <div><div class="lbl">Últimos movimientos</div><ul id="log"></ul></div>
+      <button class="btn sm ghost" id="btnPausa">⏸ Pausar</button>
+    </div>
   </section>
 
-  <!-- ================= FINAL ================= -->
+  <!-- FINAL -->
   <section class="screen" id="s-end">
     <div class="final">
       <div>
@@ -302,67 +317,59 @@ tr.gold td:first-child{color:var(--ambar);font-weight:800}
         <div class="score" id="fScore">0</div>
         <div class="sub" style="margin-top:6px">puntos de 100 · <span id="fStars"></span></div>
         <div class="kpis" id="fKpis"></div>
-        <div class="panel" style="margin-top:20px">
-          <div class="lbl">Tu código de resultado · pegalo en Moodle</div>
-          <div class="code" id="fCode"></div>
-          <button class="btn sm" id="btnCopy">Copiar código</button>
-          <button class="btn sm ghost" id="btnAgain" style="margin-left:8px">Jugar otro turno</button>
+        <div class="envio wait" id="fEnvio">Registrando tu resultado en el ranking…</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn alt" id="btnPdf">⬇ Descargar mi informe (PDF)</button>
+          <button class="btn ghost" id="btnAgain">Jugar otro turno</button>
         </div>
         <div class="lbl" style="margin-top:26px">Lo que dicen tus clientes en Google Maps</div>
         <div id="fReviews"></div>
       </div>
-      <div>
-        <div class="panel">
-          <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
-            <svg class="cacaito" style="width:64px"><use href="#cacaito"/></svg>
-            <div><div class="lbl" style="margin:0">Informe del supervisor</div><h3 style="font-size:22px">Cacaito revisa tu turno</h3></div>
-          </div>
-          <div class="deb" id="fDeb"></div>
-          <div class="lbl" style="margin-top:22px">Para profundizar</div>
-          <div class="refs">
-            <p>Berry, L. L. (1981). The employee as customer. <i>Journal of Retail Banking, 3</i>(1), 33–40.</p>
-            <p>Bitner, M. J. (1992). Servicescapes: The impact of physical surroundings on customers and employees. <i>Journal of Marketing, 56</i>(2), 57–71. https://doi.org/10.1177/002224299205600205</p>
-            <p>Bowen, D. E., &amp; Lawler, E. E. (1992). The empowerment of service workers: What, why, how, and when. <i>Sloan Management Review, 33</i>(3), 31–39.</p>
-            <p>Hart, C. W. L., Heskett, J. L., &amp; Sasser, W. E. (1990). The profitable art of service recovery. <i>Harvard Business Review, 68</i>(4), 148–156.</p>
-            <p>Heskett, J. L., Jones, T. O., Loveman, G. W., Sasser, W. E., &amp; Schlesinger, L. A. (1994). Putting the service-profit chain to work. <i>Harvard Business Review, 72</i>(2), 164–174.</p>
-            <p>Lovelock, C., &amp; Wirtz, J. (2015). <i>Marketing de servicios: Personal, tecnología y estrategia</i> (7.ª ed.). Pearson.</p>
-            <p>Pine, B. J., &amp; Gilmore, J. H. (1998). Welcome to the experience economy. <i>Harvard Business Review, 76</i>(4), 97–105.</p>
-          </div>
+      <div class="panel">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+          <svg class="cacaito" style="width:60px;height:75px" viewBox="0 0 120 150"><use href="#cacaito"/></svg>
+          <div><div class="lbl" style="margin:0">Informe del supervisor</div><h3 style="font-size:22px;color:var(--navy)">Cacaito revisa tu turno</h3></div>
         </div>
+        <div class="deb" id="fDeb"></div>
+        <div class="lbl" style="margin-top:22px">Para profundizar</div>
+        <div class="refs" id="refs"></div>
       </div>
     </div>
   </section>
 
-  <!-- ================= PANEL DOCENTE ================= -->
-  <section class="screen" id="s-profe">
-    <div class="neon" style="font-size:56px">Panel <em>docente</em></div>
-    <p class="sub">Pegá todos los códigos que entregaron (pueden ir mezclados con otro texto). Se toma el mejor intento de cada estudiante.</p>
-    <div class="panel" style="margin-top:20px">
-      <textarea id="pCodes" placeholder="TN1.xxxxx.yyyy"></textarea>
-      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn sm" id="pGo">Armar ranking</button>
-        <button class="btn sm ghost" id="pCsv">Descargar CSV</button>
-        <a class="btn sm ghost" href="./" style="text-decoration:none">← Volver al simulador</a>
+  <!-- RANKING -->
+  <section class="screen" id="s-rank">
+    <div class="rk-head">
+      <div><div class="titulo" style="font-size:64px">Ranking del <em>turno</em></div><p class="sub" id="rkUpd">Conectando…</p></div>
+      <div class="rk-stats">
+        <div class="panel"><b id="rkN">0</b><span class="lbl">terminaron</span></div>
+        <div class="panel"><b id="rkAvg">—</b><span class="lbl">promedio</span></div>
       </div>
-      <div id="pOut"></div>
     </div>
+    <div class="rk" id="rkList"></div>
+    <p class="pend" id="rkPend"></p>
+    <div style="margin-top:18px;display:flex;gap:10px"><button class="btn sm ghost" id="rkCsv">Descargar CSV</button><a class="btn sm ghost" href="./" style="text-decoration:none">← Volver al simulador</a></div>
   </section>
 
   <footer>
     <span>Turno de noche · Simulador didáctico · Marketing de Servicios · Universidad Americana (UAM) · MSc. Erick Ríos · 2026</span>
-    <a href="?profe">Panel docente</a>
+    <a href="?ranking">Ver ranking</a>
   </footer>
 </div>
 
-<!-- Cacaito flotante -->
-<div class="dock" id="dock" style="display:none">
-  <div class="bocadillo" id="bub"></div>
-  <svg class="cacaito"><use href="#cacaito"/></svg>
-</div>
-
+<div class="dock" id="dock" style="display:none"><div class="bocadillo" id="bub"></div><svg class="cacaito"><use href="#cacaito"/></svg></div>
 <div class="veil" id="veil"><div class="modal" id="modal"></div></div>
+<div id="informe"></div>
 
 <script>
+/* =========================================================
+   CONFIGURACIÓN DEL RANKING (Supabase)
+   Pegá aquí la Project URL y la publishable/anon key.
+   ========================================================= */
+const SUPA_URL = '';
+const SUPA_KEY = '';
+const SUPA_TABLE = 'turno_resultados';
+
 /* =========================================================
    DATOS · 24 negocios, uno por estudiante
    ========================================================= */
@@ -494,7 +501,7 @@ const B = [
    PARÁMETROS
    ========================================================= */
 const Q = new URLSearchParams(location.search);
-const HOUR = Q.has('rapido') ? 15000 : 60000;   // ms reales por hora simulada
+const HOUR = Q.has('rapido') ? 15000 : 72000;   // ms reales por hora simulada
 const TICK = 200;
 const SC = HOUR/60000;   // escala de tiempos de servicio y paciencia
 const BUDGET = 9000, STAFF_COST = 1200, REF_COST = 1000;
@@ -542,7 +549,7 @@ function newState(idx){
   return {bi:idx,b:B[idx],staff:[2,1,1],music:'suave',light:'cálida',emp:false,brief:false,kit:false,
     pool:0,refs:0,extraCost:0,t:0,acc:0,rushLeft:0,rushAcc:0,ratings:[],served:0,lost:0,
     queues:[[],[],[]],serving:[[],[],[]],eff:1,morale:0,outUntil:0,slowSt:-1,slowUntil:0,
-    decisions:[],events:[],paused:false,done:{},cid:0,log:[]};
+    decisions:[],events:[],paused:false,userPause:false,rt:0,done:{},cid:0,log:[]};
 }
 const prepCost = () => S.staff.reduce((a,b)=>a+b,0)*STAFF_COST + MUS[S.music] + INV.reduce((a,i)=>a+(S[i.k]?i.c:0),0);
 const totalCost = () => prepCost() + S.extraCost;
@@ -574,11 +581,11 @@ function initStart(){
 function initPrep(){
   const b=S.b;
   $('topInfo').textContent=b.e+' '+b.n+' · '+b.s;
-  $('prepTicket').innerHTML=`<div style="font-size:40px">${b.e}</div><h4>${b.n}</h4><div>${b.t}</div><hr>
+  $('prepFicha').innerHTML=`<div style="font-size:40px">${b.e}</div><h4>${b.n}</h4><div style="opacity:.85;margin-bottom:10px">${b.t}</div>
    <div class="fila"><span>GERENTE</span><b>${b.s}</b></div>
    <div class="fila"><span>TURNO</span><b>${fmtHour(b.h0)} – ${fmtHour(b.h0+6)}</b></div>
-   <div class="fila"><span>ESTACIONES</span><b>${b.st.length}</b></div><hr>
-   <div style="font-size:12px">Ojo: el flujo de ${b.cl[1]} no es parejo. Hay una hora pico y pueden surgir imprevistos.</div>`;
+   <div class="fila"><span>ESTACIONES</span><b>${b.st.join(' · ')}</b></div>
+   <p>El flujo de ${b.cl[1]} no es parejo: hay una hora pico y pueden surgir imprevistos.</p>`;
   renderPrep();
   $('btnAbrir').onclick=startGame;
 }
@@ -614,8 +621,8 @@ function startGame(){
   S.prep={staff:[...S.staff],music:S.music,light:S.light,cost:prepCost()};
   if(S.brief){ S.eff*=1.1; }
   log(`Abrimos ${S.b.n}. ¡Buen turno!`,'a');
-  say(`¡Abrimos! Mirá las barras de paciencia: si se ponen rojas, mové personal a esa estación con <b>+</b> y <b>−</b>.`,6500);
-  renderGame(true);
+  say(`¡Abrimos! La <b>franja de colores</b> de arriba te dice qué estación necesita ayuda. Movés personal con <b>+ Asignar</b> y <b>− Quitar</b>.`,8000);
+  buildBoard(); renderGame();
   timer=setInterval(tick,TICK);
 }
 function rate(h){ return 9.5 + 7*Math.exp(-Math.pow(h-S.b.pk-.5,2)/1.5); }
@@ -626,13 +633,13 @@ function spawn(){
   S.queues[st].push({id:++S.cid,name:pick(NAMES),ty,pat:22000*SC*ty.p*rnd(.85,1.15),wait:0,st});
 }
 function tick(){
-  if(S.paused) return;
-  S.t+=TICK;
+  if(S.paused||S.userPause) return;
+  S.t+=TICK; S.rt=(S.rt||0)+TICK;
   const h=S.t/HOUR;
   // llegadas
   S.acc+=rate(h)*TICK/HOUR;
   while(S.acc>=1){ spawn(); S.acc--; }
-  if(S.rushLeft>0){ S.rushAcc+=TICK; if(S.rushAcc>=900){ S.rushAcc=0; S.rushLeft--; spawn(); } }
+  if(S.rushLeft>0){ S.rushAcc+=TICK; if(S.rushAcc>=900*SC){ S.rushAcc=0; S.rushLeft--; spawn(); } }
   // atención
   const outage = S.t<S.outUntil;
   for(let i=0;i<3;i++){
@@ -653,7 +660,7 @@ function tick(){
   // agenda
   SCHEDULE.forEach((e,i)=>{ if(!S.done[i] && h>=e.at){ S.done[i]=1; e.fn(); } });
   if(h>=6) return endGame();
-  renderGame();
+  if(S.rt>=400){ S.rt=0; renderGame(); }
 }
 function finish(c){
   let r=3.4;
@@ -669,43 +676,90 @@ function finish(c){
   if(Math.random()<.18) log(`${c.name} salió de ${S.b.st[c.st]} con ${r.toFixed(1)} ★`, r>=4?'b':(r<2.5?'m':''));
 }
 
-/* ---------- Render del juego ---------- */
-function renderGame(full){
+/* ---------- Tablero del juego ---------- */
+const ROWS = [new Map(),new Map(),new Map()];
+function buildBoard(){
+  const b=S.b;
+  $('stations').innerHTML=b.st.map((s,i)=>`
+    <div class="station" id="st${i}">
+      <div class="st-top"><h3>${s}</h3><span class="estado ok" id="stE${i}">En orden</span></div>
+      <div class="nums"><div><b id="stQ${i}">0</b><small>esperando</small></div><div><b id="stS${i}">0</b><small>atendiendo</small></div></div>
+      <div class="staffctl"><button onclick="mv(${i},-1)">− Quitar</button><span id="stP${i}"></span><button onclick="mv(${i},1)">+ Asignar</button></div>
+      <div class="lista" id="stL${i}"></div>
+    </div>`).join('');
+  ROWS.forEach(m=>m.clear());
+}
+function stState(i){
+  const q=S.queues[i], s=Math.max(1,S.staff[i]);
+  let minP=1; q.forEach(c=>{ minP=Math.min(minP,1-c.wait/c.pat); });
+  if(S.staff[i]===0 && q.length) return {k:'bad',minP};
+  if(minP<.3 || q.length>=s*3) return {k:'bad',minP};
+  if(minP<.6 || q.length>s) return {k:'warn',minP};
+  return {k:'ok',minP};
+}
+const EST_TXT={ok:'En orden',warn:'Cargada',bad:'Saturada'};
+function secs(ms){ return Math.max(0,Math.ceil(ms/1000)); }
+function rowEl(i,id){
+  let el=ROWS[i].get(id);
+  if(!el){ el=document.createElement('div'); el.className='row'; el.innerHTML='<span class="ic"></span><span class="nm"></span><span class="t"></span>'; ROWS[i].set(id,el); }
+  return el;
+}
+function renderGame(){
   const b=S.b, h=S.t/HOUR;
   $('hClock').textContent=fmtHour(b.h0+h);
-  $('hHora').textContent=`HORA ${Math.min(6,Math.floor(h)+1)} DE 6 · ${b.n.toUpperCase()}`;
+  $('hHora').textContent=`Hora ${Math.min(6,Math.floor(h)+1)} de 6`;
   const a=avg();
   $('hSat').textContent=a?a.toFixed(1):'—'; $('hStars').textContent=a?starStr(a):'';
   const c=totalCost();
-  $('hCost').innerHTML=money(c)+' <span style="font-size:13px;color:var(--tenue)">/ '+money(BUDGET)+'</span>';
+  $('hCost').innerHTML=money(c)+' <small>/ '+money(BUDGET)+'</small>';
   $('hBar').className='barra'+(c>BUDGET?' over':''); $('hBar').firstElementChild.style.width=Math.min(100,c/BUDGET*100)+'%';
   $('hSrv').textContent=S.served; $('hLost').textContent=S.lost; $('hPool').textContent=S.pool;
   $('btnRef').disabled=S.refs>=3;
-  const outage=S.t<S.outUntil;
-  $('stations').innerHTML=b.st.map((s,i)=>{
-    const sv=S.serving[i], q=S.queues[i];
-    const dots=Array.from({length:S.staff[i]},(_,k)=>`<i class="${k<sv.length?'':'libre'}"></i>`).join('');
-    const svH=sv.map(x=>`<div class="cli srv"><span class="ic">${x.c.ty.i}</span><span class="nm">${x.c.name}</span><div class="pb"><i style="width:${(1-x.rem/x.tot)*100}%"></i></div></div>`).join('');
-    const vis=q.slice(0,6), more=q.length-vis.length;
-    const qH=vis.map(c=>{const p=1-c.wait/c.pat; return `<div class="cli"><span class="ic">${c.ty.i}</span><span class="nm">${c.name} · ${c.ty.k}</span><div class="pb ${p<.3?'bad':p<.6?'warn':''}"><i style="width:${p*100}%"></i></div></div>`;}).join('');
-    const lento = outage || (S.slowSt===i && S.t<S.slowUntil);
-    return `<div class="station ${lento?'lento':''}">
-      <div class="st-head"><h3>${s}</h3><div class="stepper"><button onclick="mv(${i},-1)">−</button><b>${S.staff[i]}</b><button onclick="mv(${i},1)">+</button></div></div>
-      <div class="staff">${dots}</div>
-      ${lento?'<div class="mas">⚠ Atención más lenta</div>':''}
-      <div class="zona">Atendiendo</div>${svH||'<div class="zona" style="opacity:.5">—</div>'}
-      <div class="zona" style="margin-top:6px">En espera (${q.length})</div>${qH}${more>0?`<div class="mas">+${more} más esperando…</div>`:''}
-    </div>`;
-  }).join('');
-  $('log').innerHTML=S.log.slice().reverse().map(l=>`<div class="${l.c}">${l.t}</div>`).join('');
+  const slowAll=S.t<S.outUntil;
+  let worst=null;
+  b.st.forEach((s,i)=>{
+    const st=stState(i), q=S.queues[i], sv=S.serving[i];
+    const card=$('st'+i); card.className='station'+(st.k==='ok'?'':' '+st.k);
+    const e=$('stE'+i); e.className='estado '+st.k; e.textContent=EST_TXT[st.k]+((slowAll||(S.slowSt===i&&S.t<S.slowUntil))?' · lenta':'');
+    $('stQ'+i).textContent=q.length; $('stS'+i).textContent=sv.length+' / '+S.staff[i];
+    $('stP'+i).textContent=S.staff[i]+(S.staff[i]===1?' persona':' personas');
+    // lista estable: primero los que se atienden, luego la fila en orden de llegada
+    const list=$('stL'+i), want=[];
+    sv.forEach(x=>{ const el=rowEl(i,x.c.id); el.className='row srv';
+      el.children[0].textContent=x.c.ty.i; el.children[1].innerHTML=`${x.c.name}<small>atendiendo</small>`;
+      el.children[2].textContent=Math.round((1-x.rem/x.tot)*100)+' %'; want.push(el); });
+    q.slice(0,5).forEach(cl=>{ const el=rowEl(i,cl.id); const p=1-cl.wait/cl.pat;
+      el.className='row'+(p<.3?' bad':p<.6?' warn':'');
+      el.children[0].textContent=cl.ty.i; el.children[1].innerHTML=`${cl.name}<small>${cl.ty.k}</small>`;
+      el.children[2].textContent=secs(cl.pat-cl.wait)+' s'; want.push(el); });
+    let more=list.querySelector('.mas');
+    if(q.length>5){ if(!more){more=document.createElement('div');more.className='mas';} more.textContent=`+${q.length-5} más esperando`; want.push(more); }
+    const keep=new Set(want);
+    [...list.children].forEach(ch=>{ if(!keep.has(ch)) ch.remove(); });
+    want.forEach((el,k)=>{ if(list.children[k]!==el) list.insertBefore(el,list.children[k]||null); });
+    for(const [id,el] of ROWS[i]) if(!keep.has(el)) ROWS[i].delete(id);
+    const rank={ok:0,warn:1,bad:2}[st.k];
+    if(!worst || rank>worst.rank || (rank===worst.rank && st.minP<worst.minP)) worst={i,rank,minP:st.minP,k:st.k,q:q.length};
+  });
+  // franja de foco: dice dónde mirar
+  const f=$('foco'), ft=$('focoTxt'), ic=f.querySelector('.ic');
+  const pico=fmtHour(b.h0+b.pk+.5);
+  if(worst.k==='bad'){ f.className='foco bad'; ic.textContent='🔴';
+    ft.innerHTML=`<b>Mirá ${b.st[worst.i]}:</b> está saturada, con ${worst.q} ${worst.q===1?b.cl[0]:b.cl[1]} esperando. ${S.pool?'Tenés personal libre: asignalo ahí.':'Quitá a alguien de una estación en orden y asignalo ahí, o llamá un refuerzo.'}`; }
+  else if(worst.k==='warn'){ f.className='foco warn'; ic.textContent='🟠';
+    ft.innerHTML=`<b>Atención en ${b.st[worst.i]}:</b> se está cargando. Vigilá los segundos de espera antes de que se vuelva crítica.`; }
+  else { f.className='foco ok'; ic.textContent='🟢';
+    ft.innerHTML=slowAll?'<b>Todo en orden</b>, aunque el apagón hace que todo vaya más lento.':`<b>Todo en orden.</b> La hora más cargada de tu negocio suele ser cerca de las ${pico}`; }
+  $('log').innerHTML=S.log.slice(-4).reverse().map(l=>`<li class="${l.c}">${l.t}</li>`).join('');
 }
 window.mv=(i,d)=>{
   if(d<0 && S.staff[i]>0){ S.staff[i]--; S.pool++; }
   else if(d>0 && S.pool>0){ S.pool--; S.staff[i]++; }
-  else if(d>0) say('No tenés personal libre. Quitá a alguien de otra estación con <b>−</b> o contratá un refuerzo.');
+  else if(d>0) say('No tenés personal libre. Quitá a alguien de otra estación con <b>− Quitar</b> o llamá un refuerzo.');
   renderGame();
 };
-$('btnRef').onclick=()=>{ if(S.refs>=3) return; S.refs++; S.pool++; S.extraCost+=REF_COST; S.events.push('refuerzo'); log(`Llamaste a un refuerzo (+${money(REF_COST)}).`,'a'); renderGame(); };
+$('btnRef').onclick=()=>{ if(S.refs>=3) return; S.refs++; S.pool++; S.extraCost+=REF_COST; S.events.push('refuerzo'); log(`Llamaste a un refuerzo (+${money(REF_COST)}). Asignalo a una estación.`,'a'); renderGame(); };
+$('btnPausa').onclick=()=>{ S.userPause=!S.userPause; $('btnPausa').textContent=S.userPause?'▶ Continuar':'⏸ Pausar'; };
 
 /* ---------- Eventos ---------- */
 function notice(tag,title,txt,after){
@@ -780,9 +834,18 @@ function dilemma(type){
 /* =========================================================
    CIERRE
    ========================================================= */
+const REFS = [
+ 'Berry, L. L. (1981). The employee as customer. <i>Journal of Retail Banking, 3</i>(1), 33–40.',
+ 'Bitner, M. J. (1992). Servicescapes: The impact of physical surroundings on customers and employees. <i>Journal of Marketing, 56</i>(2), 57–71. https://doi.org/10.1177/002224299205600205',
+ 'Bowen, D. E., &amp; Lawler, E. E. (1992). The empowerment of service workers: What, why, how, and when. <i>Sloan Management Review, 33</i>(3), 31–39.',
+ 'Hart, C. W. L., Heskett, J. L., &amp; Sasser, W. E. (1990). The profitable art of service recovery. <i>Harvard Business Review, 68</i>(4), 148–156.',
+ 'Heskett, J. L., Jones, T. O., Loveman, G. W., Sasser, W. E., &amp; Schlesinger, L. A. (1994). Putting the service-profit chain to work. <i>Harvard Business Review, 72</i>(2), 164–174.',
+ 'Lovelock, C., &amp; Wirtz, J. (2015). <i>Marketing de servicios: Personal, tecnología y estrategia</i> (7.ª ed.). Pearson.',
+ 'Pine, B. J., &amp; Gilmore, J. H. (1998). Welcome to the experience economy. <i>Harvard Business Review, 76</i>(4), 97–105.'
+];
+let RES=null;
 function endGame(){
   clearInterval(timer);
-  // los que están en servicio terminan; los que esperan se quedan sin atender
   S.serving.forEach(sv=>sv.forEach(x=>finish(x.c)));
   S.queues.forEach(q=>q.forEach(c=>{S.lost++;addR(1,c.ty.w);}));
   const a=avg(), cost=totalCost(), tot=S.served+S.lost;
@@ -791,19 +854,102 @@ function endGame(){
   const pSrv= tot? S.served/tot*10 : 0;
   const score=Math.round(clamp(pStars+pBud+pSrv,0,100));
   const k='tn-int-'+S.bi; const att=(+ls(k)||0)+1; ls(k,String(att));
-  const payload={v:1,n:S.b.s,b:S.bi,sc:score,st:+a.toFixed(2),at:S.served,lo:S.lost,co:Math.round(cost),i:att,d:new Date().toISOString().slice(0,16)};
-  const b64=enc(payload); const code='TN1.'+b64+'.'+hash(b64+SALT);
+  const fecha=new Date();
+  const revHTML=reviews(a), debHTML=debrief(a,cost);
+  RES={a,cost,score,att,fecha,revHTML,debHTML};
   $('dock').style.display='none';
   $('fNeg').textContent=S.b.e+' '+S.b.n+' · '+S.b.s;
   $('fScore').textContent=score;
   $('fStars').innerHTML=`<span class="estrellas">${starStr(a)}</span> ${a.toFixed(1)} de satisfacción`;
-  $('fKpis').innerHTML=[['Atendidos',S.served],['Perdidos',S.lost],['Costo',money(cost)],['Intento',att]].map(x=>`<div class="kpi"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');
-  $('fCode').textContent=code;
-  $('btnCopy').onclick=()=>{ navigator.clipboard?.writeText(code).then(()=>{$('btnCopy').textContent='¡Copiado! ✓';}).catch(()=>{}); };
+  $('fKpis').innerHTML=[['Atendidos',S.served],['Se fueron',S.lost],['Gasto',money(cost)],['Intento',att]].map(x=>`<div class="kpi"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');
+  $('fReviews').innerHTML=revHTML;
+  $('fDeb').innerHTML=debHTML;
+  $('refs').innerHTML=REFS.map(r=>`<p>${r}</p>`).join('');
   $('btnAgain').onclick=()=>location.reload();
-  $('fReviews').innerHTML=reviews(a);
-  $('fDeb').innerHTML=debrief(a,cost);
+  $('btnPdf').onclick=descargarPDF;
   show('s-end');
+  enviarResultado();
+}
+
+/* ---------- Envío automático al ranking ---------- */
+function payloadRes(){
+  return {estudiante:S.b.s, negocio:S.b.n, puntaje:RES.score, estrellas:+RES.a.toFixed(2), atendidos:S.served, perdidos:S.lost,
+    costo:Math.round(RES.cost), intento:RES.att,
+    detalle:{negocio_idx:S.bi, musica:S.prep.music, luz:S.prep.light, personal:S.prep.staff, empowerment:S.emp, briefing:S.brief, evidencia:S.kit, refuerzos:S.refs,
+      decisiones:S.decisions.map(d=>({tema:d.tag, eleccion:d.choice}))}};
+}
+async function enviarResultado(){
+  const box=$('fEnvio');
+  if(!SUPA_URL||!SUPA_KEY){ return fallbackCodigo('El ranking automático todavía no está configurado.'); }
+  box.className='envio wait'; box.textContent='Registrando tu resultado en el ranking…';
+  try{
+    const r=await fetch(`${SUPA_URL}/rest/v1/${SUPA_TABLE}`,{method:'POST',headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payloadRes())});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    box.className='envio ok'; box.innerHTML='✓ <span>Tu resultado quedó registrado en el ranking de la clase. No tenés que pegar nada en Moodle.</span>';
+  }catch(e){
+    box.className='envio bad';
+    box.innerHTML=`No se pudo registrar tu resultado (revisá tu conexión). <button class="btn sm" id="btnRetry" style="margin-left:auto">Reintentar</button>`;
+    $('btnRetry').onclick=enviarResultado;
+  }
+}
+function fallbackCodigo(msg){
+  const p={v:1,n:S.b.s,b:S.bi,sc:RES.score,st:+RES.a.toFixed(2),at:S.served,lo:S.lost,co:Math.round(RES.cost),i:RES.att,d:RES.fecha.toISOString().slice(0,16)};
+  const b64=enc(p), code='TN1.'+b64+'.'+hash(b64+SALT);
+  const box=$('fEnvio'); box.className='envio bad'; box.style.display='block';
+  box.innerHTML=`${msg} Entregale este código a tu docente:<div class="code">${code}</div>`;
+}
+
+/* ---------- Informe PDF ---------- */
+function informeHTML(){
+  const b=S.b, f=RES.fecha;
+  const fecha=f.toLocaleDateString('es-NI',{day:'numeric',month:'long',year:'numeric'})+' · '+f.toLocaleTimeString('es-NI',{hour:'2-digit',minute:'2-digit'});
+  const H2='font-family:IBM Plex Mono,monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#D9781A;margin:20px 0 8px;font-weight:600';
+  const TD1='border:1px solid #DCD4C4;padding:6px 9px;background:#F1EDE4;font-weight:700;width:34%;vertical-align:top';
+  const TD2='border:1px solid #DCD4C4;padding:6px 9px;vertical-align:top';
+  const tmp=document.createElement('div'); tmp.innerHTML=RES.debHTML;
+  const items=[...tmp.querySelectorAll('.it')].map(it=>{
+    const ok=it.querySelector('h5').classList.contains('ok');
+    return `<div class="it" style="border-left:4px solid ${ok?'#1D7F55':'#B8322B'};padding:6px 12px;margin-bottom:9px;font-size:12.5px;line-height:1.45;color:#2E3348">
+      <div style="font-family:IBM Plex Mono,monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#5B6075">${it.querySelector('.t').textContent}</div>
+      <div style="font-weight:700;color:${ok?'#1D7F55':'#B8322B'};margin:2px 0">${it.querySelector('h5').textContent}</div>${it.querySelector('p').innerHTML}</div>`;}).join('');
+  const tmp2=document.createElement('div'); tmp2.innerHTML=RES.revHTML;
+  const revs=[...tmp2.querySelectorAll('.gmaps')].map(g=>`<div class="rv" style="font-size:12.5px;border:1px solid #e3e3e3;border-radius:8px;padding:8px 11px;margin-bottom:8px;line-height:1.45">
+      <b>${g.querySelector('.gm-h b').textContent}</b> <span style="color:#E3A008">${g.querySelector('.gm-st').childNodes[0].textContent}</span><br>${g.querySelector('p').textContent}</div>`).join('');
+  const mN={silencio:'Silencio',suave:'Música suave',animada:'Música animada'};
+  const fila=(a,b2)=>`<tr><td style="${TD1}">${a}</td><td style="${TD2}">${b2}</td></tr>`;
+  return `<div style="width:740px;padding:30px 36px;background:#fff;color:#1C2033;font-family:'Bricolage Grotesque',Arial,sans-serif">
+    <div style="display:flex;justify-content:space-between;border-bottom:3px solid #1F2A4D;padding-bottom:10px;margin-bottom:16px;font-family:IBM Plex Mono,monospace;font-size:10.5px;color:#5B6075"><span>UNIVERSIDAD AMERICANA (UAM) · MARKETING DE SERVICIOS</span><span>MSc. Erick Ríos</span></div>
+    <div style="font-size:28px;font-weight:800;color:#1F2A4D;line-height:1.1">Informe de turno · ${b.n}</div>
+    <div style="color:#5B6075;margin-top:4px;font-size:13px">${b.t} · Gerente: <b>${b.s}</b> · ${fecha} · Intento ${RES.att}</div>
+    <div style="display:flex;gap:22px;align-items:center;margin:14px 0 4px"><div style="font-size:64px;font-weight:800;color:#1F2A4D;line-height:1">${RES.score}</div>
+      <div style="font-size:14px">puntos de 100<br><span style="color:#D9781A;font-size:20px">${starStr(RES.a)}</span> ${RES.a.toFixed(1)} de satisfacción</div></div>
+    <div style="${H2}">Resumen del turno</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+      ${fila('Atendidos / se fueron',S.served+' / '+S.lost)}
+      ${fila('Gasto total',money(RES.cost)+' de '+money(BUDGET))}
+      ${fila('Personal inicial',b.st.map((x,i)=>x+': '+S.prep.staff[i]).join(' · '))}
+      ${fila('Ambiente',mN[S.prep.music]+' · luz '+S.prep.light)}
+      ${fila('Inversiones',[S.emp&&'Empowerment',S.brief&&'Briefing de marketing interno',S.kit&&'Evidencia física'].filter(Boolean).join(' · ')||'Ninguna')}
+      ${fila('Refuerzos llamados',S.refs)}
+    </table>
+    <div style="${H2}">Análisis de Cacaito</div>${items}
+    <div style="${H2}">Reseñas de tus clientes</div>${revs}
+    <div style="${H2}">Referencias</div>
+    <div style="font-size:10.5px;color:#5B6075;line-height:1.4">${REFS.map(r=>`<p class="rv" style="padding-left:2em;text-indent:-2em;margin-bottom:5px">${r}</p>`).join('')}</div>
+  </div>`;
+}
+function cargarScript(src){ return new Promise((ok,ko)=>{ const s=document.createElement('script'); s.src=src; s.onload=ok; s.onerror=ko; document.head.appendChild(s); }); }
+async function descargarPDF(){
+  const btn=$('btnPdf'); const txt=btn.textContent; btn.disabled=true; btn.textContent='Generando PDF…';
+  try{
+    if(!window.html2pdf) await cargarScript('https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js');
+    window.scrollTo(0,0);
+    const el=$('informe'); el.innerHTML=informeHTML();
+    const nombre=('Informe-turno-'+S.b.s).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-')+'.pdf';
+    await html2pdf().set({margin:[8,8,10,8],filename:nombre,image:{type:'jpeg',quality:.95},html2canvas:{scale:2,useCORS:true,scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['avoid-all']}}).from(el.firstElementChild).save();
+    btn.textContent='✓ PDF descargado';
+  }catch(e){ btn.textContent='No se pudo generar. Reintentar'; }
+  setTimeout(()=>{btn.disabled=false; if(btn.textContent.startsWith('✓')) btn.textContent=txt;},2500);
 }
 
 function reviews(a){
@@ -852,36 +998,44 @@ function debrief(a,cost){
   return it.map(x=>`<div class="it"><div class="t">${x.t}</div><h5 class="${x.ok?'ok':'ko'}">${x.ok?'✓':'✗'} ${x.h}</h5><p>${x.p}</p></div>`).join('');
 }
 
+
 /* =========================================================
-   PANEL DOCENTE
+   RANKING EN VIVO (?ranking)
    ========================================================= */
-let lastRows=[];
-function initProfe(){
-  show('s-profe'); $('topInfo').textContent='Panel docente';
-  $('pGo').onclick=()=>{
-    const codes=$('pCodes').value.match(/TN1\.[A-Za-z0-9+/=]+\.[a-z0-9]+/g)||[];
-    const best={}, bad=[];
-    codes.forEach(cd=>{
-      const [,b64,hs]=cd.split('.');
-      if(hash(b64+SALT)!==hs){bad.push(cd);return;}
-      try{ const o=dec(b64); const k=o.n; if(!best[k]){best[k]={...o,n_int:0};} best[k].n_int++; if(o.sc>best[k].sc) best[k]={...o,n_int:best[k].n_int}; }catch(e){bad.push(cd);}
-    });
-    const rows=Object.values(best).sort((x,y)=>y.sc-x.sc); lastRows=rows;
+let RK_ROWS=[];
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+async function cargarRanking(){
+  try{
+    const r=await fetch(`${SUPA_URL}/rest/v1/${SUPA_TABLE}?select=estudiante,negocio,puntaje,estrellas,atendidos,perdidos,costo,intento,created_at&order=created_at.asc`,{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY}});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    const valid=new Set(B.map(b=>b.s)), best={};
+    data.forEach(d=>{ if(!valid.has(d.estudiante)) return;
+      const k=d.estudiante; if(!best[k]) best[k]={...d,intentos:0}; best[k].intentos++;
+      if(d.puntaje>best[k].puntaje) best[k]={...d,intentos:best[k].intentos}; });
+    const rows=Object.values(best).sort((x,y)=>y.puntaje-x.puntaje||y.estrellas-x.estrellas); RK_ROWS=rows;
+    $('rkN').textContent=rows.length+' / '+B.length;
+    $('rkAvg').textContent=rows.length?Math.round(rows.reduce((a,r)=>a+r.puntaje,0)/rows.length):'—';
+    $('rkList').innerHTML=rows.length?rows.map((r,i)=>{ const b=B.find(x=>x.s===r.estudiante);
+      return `<div class="rk-row ${i<3?'top'+(i+1):''}"><span class="pos">${i<3?['🥇','🥈','🥉'][i]:i+1}</span><span class="nm">${esc(r.estudiante)}</span><span class="ng">${b?b.e:''} ${esc(r.negocio)}</span><span class="st">${starStr(r.estrellas)}</span><span class="pt">${r.puntaje}</span></div>`;}).join('')
+      :'<div class="panel">Todavía nadie ha cerrado su turno. Esta pantalla se actualiza sola.</div>';
     const miss=B.filter(b=>!best[b.s]).map(b=>b.s);
-    $('pOut').innerHTML=`<table><thead><tr><th>#</th><th>Estudiante</th><th>Negocio</th><th>Puntaje</th><th>★</th><th>Atend.</th><th>Perd.</th><th>Costo</th><th>Intentos</th><th>Fecha</th></tr></thead><tbody>
-      ${rows.map((r,i)=>`<tr class="${i<3?'gold':''}"><td>${i+1}</td><td>${r.n}</td><td>${B[r.b].e} ${B[r.b].n}</td><td><b>${r.sc}</b></td><td>${r.st}</td><td>${r.at}</td><td>${r.lo}</td><td>${money(r.co)}</td><td>${r.n_int}</td><td>${r.d.replace('T',' ')}</td></tr>`).join('')}
-      </tbody></table>
-      ${bad.length?`<p class="ko" style="margin-top:12px">⚠ ${bad.length} código(s) inválido(s) o alterado(s).</p>`:''}
-      ${miss.length?`<p class="sub" style="margin-top:12px">Sin entregar (${miss.length}): ${miss.join(', ')}</p>`:''}`;
-  };
-  $('pCsv').onclick=()=>{
-    if(!lastRows.length) return;
-    const csv='Posicion,Estudiante,Negocio,Puntaje,Estrellas,Atendidos,Perdidos,Costo,Intentos,Fecha\n'+lastRows.map((r,i)=>[i+1,r.n,B[r.b].n,r.sc,r.st,r.at,r.lo,r.co,r.n_int,r.d].map(x=>`"${x}"`).join(',')).join('\n');
+    $('rkPend').textContent=miss.length?`Turno en curso o pendiente (${miss.length}): ${miss.join(' · ')}`:'¡Toda la clase cerró su turno!';
+    $('rkUpd').textContent='Se actualiza solo cada 5 segundos · última actualización '+new Date().toLocaleTimeString('es-NI');
+  }catch(e){ $('rkUpd').textContent='Sin conexión con el ranking. Reintentando…'; }
+}
+function initRanking(){
+  show('s-rank'); $('topInfo').textContent='Ranking en vivo';
+  if(!SUPA_URL||!SUPA_KEY){ $('rkUpd').textContent='El ranking todavía no está conectado a Supabase.'; return; }
+  cargarRanking(); setInterval(cargarRanking,5000);
+  $('rkCsv').onclick=()=>{
+    if(!RK_ROWS.length) return;
+    const csv='Posicion,Estudiante,Negocio,Puntaje,Estrellas,Atendidos,Perdidos,Costo,Intentos,Fecha\n'+RK_ROWS.map((r,i)=>[i+1,r.estudiante,r.negocio,r.puntaje,r.estrellas,r.atendidos,r.perdidos,r.costo,r.intentos,r.created_at].map(x=>`"${x}"`).join(',')).join('\n');
     const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})); a.download='ranking-turno-de-noche.csv'; a.click();
   };
 }
 
-if(Q.has('profe')) initProfe(); else initStart();
+if(Q.has('ranking')||Q.has('profe')) initRanking(); else initStart();
 </script>
 </body>
 </html>
