@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turno de noche · Simulador de gerencia de servicios · Marketing de Servicios UAM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noche:#13152A; --noche2:#1B1E3A; --noche3:#252950; --linea:#34396A;
+  --ambar:#F4A940; --coral:#FF5D5D; --menta:#3DDBA0; --papel:#F6F0E4; --tinta:#E9E6F5; --tenue:#9A9CC4;
+  --display:'Bricolage Grotesque',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--noche); color:var(--tinta); font-family:var(--display); font-size:16px; line-height:1.45;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% -10%, rgba(244,169,64,.13), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(255,93,93,.10), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+  background-attachment:fixed;
+}
+button{font-family:inherit;cursor:pointer;border:none}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px}
+.screen{display:none;animation:in .45s ease}
+.screen.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- Encabezado neón ---------- */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.marca{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--tenue)}
+.marca b{color:var(--ambar);font-weight:600}
+.neon{
+  font-weight:800;font-size:clamp(46px,8vw,104px);line-height:.9;letter-spacing:-.03em;color:#FFE9C7;
+  text-shadow:0 0 6px rgba(244,169,64,.9),0 0 22px rgba(244,169,64,.55),0 0 60px rgba(255,93,93,.35);
+  animation:flick 7s infinite;
+}
+.neon em{font-style:normal;color:#FFD0D0;text-shadow:0 0 6px rgba(255,93,93,.95),0 0 24px rgba(255,93,93,.6)}
+@keyframes flick{0%,92%,100%{opacity:1}93%{opacity:.55}94%{opacity:1}96%{opacity:.7}97%{opacity:1}}
+.sub{font-family:var(--mono);color:var(--tenue);margin-top:14px;font-size:14px}
+
+/* ---------- Tarjetas base ---------- */
+.panel{background:var(--noche2);border:1px solid var(--linea);border-radius:18px;padding:22px}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue);margin-bottom:10px}
+.btn{background:var(--ambar);color:#241606;font-weight:800;font-size:17px;padding:14px 26px;border-radius:999px;transition:transform .15s,box-shadow .15s;box-shadow:0 0 0 rgba(244,169,64,0)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(244,169,64,.35)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--tinta);border:1px solid var(--linea)}
+.btn.sm{font-size:13px;padding:8px 14px}
+
+/* ---------- Inicio ---------- */
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:34px;align-items:start}
+.reglas{list-style:none;margin-top:26px;display:grid;gap:10px}
+.reglas li{display:flex;gap:12px;align-items:flex-start;font-size:15.5px}
+.reglas li span{font-family:var(--mono);font-size:12px;color:var(--noche);background:var(--ambar);border-radius:6px;padding:2px 7px;margin-top:2px;flex:none}
+select{width:100%;font-family:var(--display);font-size:17px;padding:14px;border-radius:12px;background:var(--noche);color:var(--tinta);border:1px solid var(--linea);margin-bottom:16px}
+.asig{border:1px dashed var(--linea);border-radius:14px;padding:18px;min-height:120px;margin-bottom:18px;display:flex;gap:16px;align-items:center}
+.asig .em{font-size:52px;line-height:1}
+.asig h3{font-size:24px;line-height:1.1}
+.asig p{font-family:var(--mono);font-size:13px;color:var(--tenue)}
+
+/* ---------- Ticket (comanda) ---------- */
+.ticket{background:var(--papel);color:#2a2238;border-radius:6px;padding:20px 20px 26px;position:relative;font-family:var(--mono);font-size:13px;
+  -webkit-mask:radial-gradient(circle 7px at 50% 100%,transparent 6.5px,#000 7px) 0 0/18px 100% repeat-x;
+          mask:radial-gradient(circle 7px at 50% 100%,transparent 6.5px,#000 7px) 0 0/18px 100% repeat-x}
+.ticket h4{font-family:var(--display);font-size:22px;line-height:1.1;margin-bottom:4px}
+.ticket hr{border:none;border-top:1px dashed #b9ae9a;margin:12px 0}
+.ticket .fila{display:flex;justify-content:space-between;gap:10px}
+
+/* ---------- Preparación ---------- */
+.prep{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start}
+.opts{display:grid;gap:18px}
+.est-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--linea)}
+.est-row:last-child{border:none}
+.stepper{display:flex;align-items:center;gap:10px;font-family:var(--mono)}
+.stepper button{width:32px;height:32px;border-radius:50%;background:var(--noche3);color:var(--tinta);font-size:18px;font-weight:700}
+.stepper b{min-width:18px;text-align:center;font-size:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--noche);border:1px solid var(--linea);color:var(--tinta);padding:9px 14px;border-radius:999px;font-size:14px}
+.chip.on{background:var(--ambar);color:#241606;border-color:var(--ambar);font-weight:700}
+.inv{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--linea);border-radius:12px;cursor:pointer;transition:border-color .15s}
+.inv.on{border-color:var(--menta);background:rgba(61,219,160,.07)}
+.inv .box{width:22px;height:22px;border-radius:6px;border:2px solid var(--tenue);flex:none;margin-top:2px;display:grid;place-items:center;font-size:14px;color:var(--noche)}
+.inv.on .box{background:var(--menta);border-color:var(--menta)}
+.inv small{display:block;color:var(--tenue);font-size:13px}
+.inv .precio{font-family:var(--mono);font-size:13px;color:var(--ambar);margin-left:auto;white-space:nowrap}
+.budget{position:sticky;top:12px;z-index:5}
+.barra{height:12px;border-radius:99px;background:var(--noche);overflow:hidden;border:1px solid var(--linea)}
+.barra i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--ambar));transition:width .3s}
+.barra.over i{background:var(--coral)}
+
+/* ---------- Juego ---------- */
+.hud{display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:14px;align-items:stretch;margin-bottom:18px}
+.hud .panel{padding:14px 16px}
+.reloj{font-family:var(--mono);font-size:34px;font-weight:600;color:#FFE9C7;text-shadow:0 0 14px rgba(244,169,64,.6);line-height:1}
+.reloj small{display:block;font-size:11px;color:var(--tenue);text-shadow:none;letter-spacing:.12em;margin-top:6px}
+.big{font-size:28px;font-weight:800;line-height:1}
+.estrellas{color:var(--ambar);letter-spacing:2px}
+.pool{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.stations{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.station{background:var(--noche2);border:1px solid var(--linea);border-radius:18px;padding:14px;min-height:380px;display:flex;flex-direction:column;gap:10px}
+.station.lento{border-color:var(--coral);box-shadow:0 0 0 1px var(--coral) inset}
+.st-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.st-head h3{font-size:18px;line-height:1.1}
+.staff{display:flex;gap:5px;flex-wrap:wrap;min-height:18px}
+.staff i{width:16px;height:16px;border-radius:50%;background:var(--menta);box-shadow:0 0 8px rgba(61,219,160,.6)}
+.staff i.libre{background:transparent;border:2px solid var(--menta);box-shadow:none}
+.zona{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--tenue)}
+.cli{background:var(--papel);color:#2a2238;border-radius:8px;padding:7px 10px;font-family:var(--mono);font-size:12px;display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center;animation:slide .35s ease}
+@keyframes slide{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+.cli .ic{font-size:18px;grid-row:span 2}
+.cli .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb{height:5px;border-radius:9px;background:#ddd2bf;overflow:hidden}
+.pb i{display:block;height:100%;background:var(--menta)}
+.pb.warn i{background:var(--ambar)} .pb.bad i{background:var(--coral)}
+.cli.srv{background:#DFF7EC}
+.cli.srv .pb i{background:#1f9e6e}
+.mas{font-family:var(--mono);font-size:12px;color:var(--coral)}
+.log{margin-top:16px;font-family:var(--mono);font-size:12.5px;max-height:120px;overflow:auto;display:flex;flex-direction:column-reverse;gap:4px;color:var(--tenue)}
+.log .b{color:var(--menta)} .log .m{color:var(--coral)} .log .a{color:var(--ambar)}
+
+/* ---------- Cacaito ---------- */
+.cacaito{width:84px;height:auto;flex:none;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+.dock{position:fixed;right:18px;bottom:18px;display:flex;align-items:flex-end;gap:8px;z-index:20;max-width:380px;pointer-events:none}
+.bocadillo{background:var(--papel);color:#2a2238;border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);opacity:0;transform:translateY(8px);transition:.3s}
+.bocadillo.on{opacity:1;transform:none}
+
+/* ---------- Modal ---------- */
+.veil{position:fixed;inset:0;background:rgba(8,9,20,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:18px}
+.veil.on{display:flex}
+.modal{background:var(--noche2);border:1px solid var(--linea);border-radius:22px;max-width:640px;width:100%;padding:26px;animation:in .3s ease;max-height:92vh;overflow:auto}
+.modal .tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:rgba(255,93,93,.15);color:var(--coral);margin-bottom:10px}
+.modal h3{font-size:24px;line-height:1.15;margin-bottom:8px}
+.modal .sit{display:flex;gap:14px;align-items:flex-start;margin:12px 0 18px}
+.modal .sit p{font-size:16.5px}
+.op{display:block;width:100%;text-align:left;background:var(--noche);border:1px solid var(--linea);color:var(--tinta);border-radius:14px;padding:14px 16px;margin-bottom:10px;font-size:15.5px;transition:border-color .15s,transform .15s}
+.op:hover{border-color:var(--ambar);transform:translateX(3px)}
+.op b{font-family:var(--mono);color:var(--ambar);margin-right:8px}
+.op small{display:block;color:var(--tenue);font-family:var(--mono);font-size:12px;margin-top:3px}
+.fb{border-left:3px solid var(--ambar);padding:10px 14px;background:rgba(244,169,64,.07);border-radius:0 12px 12px 0;margin-bottom:16px;font-size:15px}
+
+/* ---------- Final ---------- */
+.final{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.score{font-size:clamp(64px,10vw,120px);font-weight:800;line-height:.9;color:#FFE9C7;text-shadow:0 0 22px rgba(244,169,64,.5)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.kpi{background:var(--noche);border:1px solid var(--linea);border-radius:12px;padding:10px}
+.kpi b{display:block;font-size:20px}
+.kpi span{font-family:var(--mono);font-size:10.5px;color:var(--tenue);text-transform:uppercase;letter-spacing:.1em}
+.gmaps{background:#fff;color:#202124;border-radius:14px;padding:16px 18px;font-family:Roboto,Arial,sans-serif;margin-bottom:12px}
+.gm-h{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700}
+.gm-h b{font-size:14px;display:block} .gm-h small{font-size:12px;color:#70757a}
+.gm-st{color:#fbbc04;font-size:15px;letter-spacing:1px} .gm-st span{color:#70757a;font-size:12px;letter-spacing:0;margin-left:6px}
+.gmaps p{font-size:14px;line-height:1.5;margin-top:6px}
+.deb{display:grid;gap:12px}
+.deb .it{border:1px solid var(--linea);border-radius:14px;padding:14px;background:var(--noche)}
+.deb .it .t{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ambar)}
+.deb .it h5{font-size:16px;margin:4px 0}
+.deb .it p{font-size:14.5px;color:#cfd0ea}
+.ok{color:var(--menta)} .ko{color:var(--coral)}
+.code{font-family:var(--mono);font-size:12px;word-break:break-all;background:var(--noche);border:1px dashed var(--ambar);border-radius:12px;padding:14px;color:#FFE9C7;margin:10px 0}
+.refs{font-size:13px;color:var(--tenue);margin-top:10px}
+.refs p{padding-left:2em;text-indent:-2em;margin-bottom:6px}
+footer{margin-top:40px;font-family:var(--mono);font-size:12px;color:var(--tenue);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--linea);padding-top:16px}
+footer a{color:var(--tenue)}
+
+/* ---------- Panel docente ---------- */
+textarea{width:100%;min-height:160px;background:var(--noche);color:var(--tinta);border:1px solid var(--linea);border-radius:12px;padding:12px;font-family:var(--mono);font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:16px}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--tenue);text-align:left;padding:8px;border-bottom:1px solid var(--linea)}
+td{padding:9px 8px;border-bottom:1px solid var(--linea)}
+tr.gold td:first-child{color:var(--ambar);font-weight:800}
+
+@media (max-width:900px){
+  .hero,.prep,.final{grid-template-columns:1fr}
+  .hud{grid-template-columns:1fr 1fr}
+  .stations{grid-template-columns:1fr}
+  .station{min-height:auto}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- Cacaito (plantilla SVG reutilizable) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="vaina" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#E0913A"/><stop offset=".55" stop-color="#B8612A"/><stop offset="1" stop-color="#7A3A1C"/>
+    </linearGradient>
+    <symbol id="cacaito" viewBox="0 0 120 150">
+      <ellipse cx="60" cy="144" rx="30" ry="5" fill="#000" opacity=".25"/>
+      <path d="M60 14 C92 18 104 60 100 92 C96 124 78 140 60 140 C42 140 24 124 20 92 C16 60 28 18 60 14Z" fill="url(#vaina)"/>
+      <path d="M60 18 C56 60 56 100 60 138 M42 24 C32 60 34 104 46 134 M78 24 C88 60 86 104 74 134" stroke="#6B3218" stroke-width="2.4" fill="none" opacity=".45"/>
+      <path d="M58 14 C56 6 62 2 68 4" stroke="#4E6B2A" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M66 6 C74 0 84 4 82 10 C76 12 70 10 66 6Z" fill="#6E9A3A"/>
+      <!-- gorra de supervisor -->
+      <path d="M34 38 C40 22 80 22 86 38 Z" fill="#1B1E3A"/>
+      <rect x="30" y="36" width="60" height="7" rx="3.5" fill="#F4A940"/>
+      <!-- auricular -->
+      <path d="M26 66 C24 50 32 42 40 40" stroke="#1B1E3A" stroke-width="3" fill="none"/>
+      <circle cx="26" cy="70" r="6" fill="#1B1E3A"/>
+      <path d="M28 74 C32 84 40 88 46 88" stroke="#1B1E3A" stroke-width="2.4" fill="none"/>
+      <circle cx="47" cy="88" r="3" fill="#FF5D5D"/>
+      <!-- cara -->
+      <ellipse cx="48" cy="70" rx="8" ry="9.5" fill="#fff"/><ellipse cx="74" cy="70" rx="8" ry="9.5" fill="#fff"/>
+      <circle cx="50" cy="72" r="4.4" fill="#241606"/><circle cx="76" cy="72" r="4.4" fill="#241606"/>
+      <circle cx="51.6" cy="70" r="1.5" fill="#fff"/><circle cx="77.6" cy="70" r="1.5" fill="#fff"/>
+      <path d="M50 92 Q61 102 72 92" stroke="#241606" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <circle cx="40" cy="86" r="5" fill="#FF8A7A" opacity=".5"/><circle cx="82" cy="86" r="5" fill="#FF8A7A" opacity=".5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <div class="top">
+    <div class="marca"><b>UAM</b> · Marketing de Servicios · MSc. Erick Ríos</div>
+    <div class="marca" id="topInfo"></div>
+  </div>
+
+  <!-- ================= INICIO ================= -->
+  <section class="screen on" id="s-start">
+    <div class="hero">
+      <div>
+        <div class="neon">Turno<br>de <em>noche</em></div>
+        <p class="sub">Simulador de gerencia de servicios · 6 horas que definen tu reputación</p>
+        <ul class="reglas">
+          <li><span>01</span><div>Te toca dirigir <b>un negocio de servicios real</b> durante un turno completo. Nadie más de la clase tiene tu mismo negocio.</div></li>
+          <li><span>02</span><div>Antes de abrir, <b>prepará el turno</b>: personal por estación, música, iluminación e inversiones. Tenés un presupuesto limitado.</div></li>
+          <li><span>03</span><div>Durante el turno entran clientes con distintos perfiles. Si esperan demasiado, <b>se van molestos</b>. Mové a tu personal para que no pase.</div></li>
+          <li><span>04</span><div>Van a aparecer <b>imprevistos y decisiones difíciles</b>. Cada decisión cambia la satisfacción y el costo.</div></li>
+          <li><span>05</span><div>Al cierre vas a ver las <b>reseñas</b> que dejaron tus clientes y un <b>código de resultado</b> que tenés que pegar en Moodle.</div></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="lbl">¿Quién gerencia hoy?</div>
+        <select id="selEst"><option value="">— Elegí tu nombre —</option></select>
+        <div class="asig" id="asig"><p style="font-family:var(--mono);color:var(--tenue)">Tu negocio asignado va a aparecer aquí.</p></div>
+        <button class="btn" id="btnStart" disabled>Abrir el negocio →</button>
+        <p class="sub" style="font-size:12px;margin-top:14px">Consejo: jugalo en computadora, con pantalla completa y sin prisa. El turno dura cerca de 8–10 minutos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PREPARACIÓN ================= -->
+  <section class="screen" id="s-prep">
+    <div class="prep">
+      <div style="display:grid;gap:16px">
+        <div class="ticket" id="prepTicket"></div>
+        <div class="panel budget">
+          <div class="lbl">Presupuesto del turno</div>
+          <div class="fila" style="display:flex;justify-content:space-between;font-family:var(--mono);margin-bottom:8px"><span id="bGast">C$ 0</span><span id="bTot">de C$ 0</span></div>
+          <div class="barra" id="bBar"><i style="width:0"></i></div>
+          <p class="sub" style="font-size:12px;margin-top:10px" id="bNota"></p>
+          <button class="btn" style="width:100%;margin-top:14px" id="btnAbrir">Abrir puertas 🔓</button>
+        </div>
+      </div>
+      <div class="opts">
+        <div class="panel">
+          <div class="lbl">1 · Personal por estación <span style="text-transform:none;letter-spacing:0">(C$ 1,200 por persona)</span></div>
+          <div id="prepStaff"></div>
+        </div>
+        <div class="panel">
+          <div class="lbl">2 · Ambiente: música</div>
+          <div class="chips" id="chMus"></div>
+          <div class="lbl" style="margin-top:18px">3 · Ambiente: iluminación</div>
+          <div class="chips" id="chLuz"></div>
+        </div>
+        <div class="panel">
+          <div class="lbl">4 · Inversiones en tu gente y tu espacio</div>
+          <div style="display:grid;gap:10px" id="prepInv"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= JUEGO ================= -->
+  <section class="screen" id="s-game">
+    <div class="hud">
+      <div class="panel"><div class="reloj" id="hClock">--:--</div><small class="reloj" style="font-size:11px" id="hHora"></small></div>
+      <div class="panel"><div class="lbl">Satisfacción</div><div class="big"><span id="hSat">—</span> <span class="estrellas" id="hStars"></span></div></div>
+      <div class="panel"><div class="lbl">Costo / presupuesto</div><div class="big" style="font-size:20px;font-family:var(--mono)" id="hCost">C$ 0</div><div class="barra" style="margin-top:8px" id="hBar"><i></i></div></div>
+      <div class="panel"><div class="lbl">Atendidos · Perdidos</div><div class="big"><span class="ok" id="hSrv">0</span> · <span class="ko" id="hLost">0</span></div></div>
+      <div class="panel pool">
+        <div class="lbl" style="margin:0">Personal libre: <b id="hPool" style="color:var(--menta)">0</b></div>
+        <button class="btn sm" id="btnRef">+ Refuerzo C$ 1,000</button>
+      </div>
+    </div>
+    <div class="stations" id="stations"></div>
+    <div class="log" id="log"></div>
+  </section>
+
+  <!-- ================= FINAL ================= -->
+  <section class="screen" id="s-end">
+    <div class="final">
+      <div>
+        <div class="lbl">Cierre de caja · <span id="fNeg"></span></div>
+        <div class="score" id="fScore">0</div>
+        <div class="sub" style="margin-top:6px">puntos de 100 · <span id="fStars"></span></div>
+        <div class="kpis" id="fKpis"></div>
+        <div class="panel" style="margin-top:20px">
+          <div class="lbl">Tu código de resultado · pegalo en Moodle</div>
+          <div class="code" id="fCode"></div>
+          <button class="btn sm" id="btnCopy">Copiar código</button>
+          <button class="btn sm ghost" id="btnAgain" style="margin-left:8px">Jugar otro turno</button>
+        </div>
+        <div class="lbl" style="margin-top:26px">Lo que dicen tus clientes en Google Maps</div>
+        <div id="fReviews"></div>
+      </div>
+      <div>
+        <div class="panel">
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+            <svg class="cacaito" style="width:64px"><use href="#cacaito"/></svg>
+            <div><div class="lbl" style="margin:0">Informe del supervisor</div><h3 style="font-size:22px">Cacaito revisa tu turno</h3></div>
+          </div>
+          <div class="deb" id="fDeb"></div>
+          <div class="lbl" style="margin-top:22px">Para profundizar</div>
+          <div class="refs">
+            <p>Berry, L. L. (1981). The employee as customer. <i>Journal of Retail Banking, 3</i>(1), 33–40.</p>
+            <p>Bitner, M. J. (1992). Servicescapes: The impact of physical surroundings on customers and employees. <i>Journal of Marketing, 56</i>(2), 57–71. https://doi.org/10.1177/002224299205600205</p>
+            <p>Bowen, D. E., &amp; Lawler, E. E. (1992). The empowerment of service workers: What, why, how, and when. <i>Sloan Management Review, 33</i>(3), 31–39.</p>
+            <p>Hart, C. W. L., Heskett, J. L., &amp; Sasser, W. E. (1990). The profitable art of service recovery. <i>Harvard Business Review, 68</i>(4), 148–156.</p>
+            <p>Heskett, J. L., Jones, T. O., Loveman, G. W., Sasser, W. E., &amp; Schlesinger, L. A. (1994). Putting the service-profit chain to work. <i>Harvard Business Review, 72</i>(2), 164–174.</p>
+            <p>Lovelock, C., &amp; Wirtz, J. (2015). <i>Marketing de servicios: Personal, tecnología y estrategia</i> (7.ª ed.). Pearson.</p>
+            <p>Pine, B. J., &amp; Gilmore, J. H. (1998). Welcome to the experience economy. <i>Harvard Business Review, 76</i>(4), 97–105.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PANEL DOCENTE ================= -->
+  <section class="screen" id="s-profe">
+    <div class="neon" style="font-size:56px">Panel <em>docente</em></div>
+    <p class="sub">Pegá todos los códigos que entregaron (pueden ir mezclados con otro texto). Se toma el mejor intento de cada estudiante.</p>
+    <div class="panel" style="margin-top:20px">
+      <textarea id="pCodes" placeholder="TN1.xxxxx.yyyy"></textarea>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn sm" id="pGo">Armar ranking</button>
+        <button class="btn sm ghost" id="pCsv">Descargar CSV</button>
+        <a class="btn sm ghost" href="./" style="text-decoration:none">← Volver al simulador</a>
+      </div>
+      <div id="pOut"></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Turno de noche · Simulador didáctico · Marketing de Servicios · Universidad Americana (UAM) · MSc. Erick Ríos · 2026</span>
+    <a href="?profe">Panel docente</a>
+  </footer>
+</div>
+
+<!-- Cacaito flotante -->
+<div class="dock" id="dock" style="display:none">
+  <div class="bocadillo" id="bub"></div>
+  <svg class="cacaito"><use href="#cacaito"/></svg>
+</div>
+
+<div class="veil" id="veil"><div class="modal" id="modal"></div></div>
+
+<script>
+/* =========================================================
+   DATOS · 24 negocios, uno por estudiante
+   ========================================================= */
+const CL = ['cliente','clientes'];
+const B = [
+ {s:'Bridney Bello',n:'Grano de Oro Café',t:'Cafetería de especialidad',e:'☕',cl:CL,st:['Barra de café','Caja','Salón'],m:'suave',l:'cálida',h0:14,pk:3,
+  rush:'Terminó una reunión en la oficina de enfrente: llega un grupo de 10 pidiendo cafés para llevar.',
+  q:'Un cliente reclama que su capuchino llegó tibio y que pagó C$ 120 por él.',
+  em:'La barista nueva no domina el método V60 y los filtrados se están atrasando.',
+  pr:'«Tu café en 5 minutos o menos»',vip:'Una creadora de contenido cafetero con 80 mil seguidores está grabando su visita.',det:'el café de altura de Jinotega'},
+ {s:'Meybell Bermúdez',n:'Bar El Guanacaste',t:'Bar de barrio',e:'🍺',cl:CL,st:['Barra','Mesas','Caja'],m:'animada',l:'tenue',h0:18,pk:4,
+  rush:'Terminó el partido y llega media tribuna a celebrar.',
+  q:'Un cliente reclama que le cobraron dos baldes de cerveza que nunca pidió.',
+  em:'Un mesero lleva tres turnos seguidos y está atendiendo de mala gana.',
+  pr:'«Las cervezas más heladas de Managua»',vip:'Un grupo de ejecutivos quiere la terraza para celebrar un cierre de ventas.',det:'las alitas y la cerveza bien helada'},
+ {s:'Solmaria Bravo',n:'Studio Bella Luna',t:'Salón de belleza',e:'💇‍♀️',cl:['clienta','clientas'],st:['Recepción','Estilismo','Lavado'],m:'suave',l:'fría',h0:13,pk:3,
+  rush:'Hay una graduación esta noche: llegan cinco clientas sin cita queriendo peinado.',
+  q:'Una clienta dice que el tinte no quedó del tono que pidió.',
+  em:'La estilista estrella se queda con todas las clientas y las demás están desmotivadas.',
+  pr:'«Puntualidad garantizada en tu cita»',vip:'Una novia viene a su prueba de peinado con su mamá y cuatro damas.',det:'el peinado y el trato de las estilistas'},
+ {s:'Ana Cristina Callejas',n:'Clínica Santa Lucía',t:'Clínica privada',e:'🏥',cl:['paciente','pacientes'],st:['Recepción','Consultorios','Laboratorio'],m:'suave',l:'cálida',h0:16,pk:2,
+  rush:'Brote de gripe en un colegio cercano: llegan varias familias con niños con fiebre.',
+  q:'Una paciente lleva una hora esperando y asegura que la «saltaron» en la fila.',
+  em:'La recepcionista no sabe explicar los costos de los exámenes y los pacientes se molestan.',
+  pr:'«Atención sin largas esperas»',vip:'Un paciente de una aseguradora importante viene a un chequeo ejecutivo.',det:'la atención de las enfermeras'},
+ {s:'Regyna Corea',n:'Casa Colonial Boutique Hotel',t:'Hotel boutique en Granada',e:'🏨',cl:['huésped','huéspedes'],st:['Recepción','Restaurante','Housekeeping'],m:'suave',l:'cálida',h0:14,pk:2,
+  rush:'Llega un bus de turistas europeos dos horas antes de lo previsto.',
+  q:'Un huésped canadiense dice que el aire acondicionado no enfría y no ha podido descansar.',
+  em:'El recepcionista no domina el inglés y se pone nervioso con los turistas.',
+  pr:'«Una experiencia colonial con confort de lujo»',vip:'Una agencia de viajes alemana evalúa el hotel para incluirlo en su catálogo.',det:'el patio colonial y el desayuno'},
+ {s:'Kenia Coronado',n:'Fritanga Doña Tere',t:'Fritanga',e:'🍖',cl:CL,st:['Parrilla','Despacho','Caja'],m:'animada',l:'fría',h0:17,pk:1,
+  rush:'Salió la misa de la parroquia y la fila llega hasta la esquina.',
+  q:'Un cliente dice que su gallo pinto venía frío y le faltó la tajada.',
+  em:'El parrillero de refuerzo no conoce el punto de la carne y la está pasando de cocción.',
+  pr:'«Tu plato listo en 3 minutos»',vip:'Un food blogger nicaragüense viene a probar «la mejor fritanga del barrio».',det:'la carne asada y el gallo pinto'},
+ {s:'Adriana Cuadra',n:'PowerFit Gym',t:'Gimnasio',e:'🏋️',cl:['socio','socios'],st:['Recepción','Área de pesas','Clases grupales'],m:'animada',l:'fría',h0:16,pk:2,
+  rush:'Es lunes después de la quincena: todos los socios decidieron empezar la rutina hoy.',
+  q:'Un socio reclama que la caminadora que usa siempre lleva una semana dañada.',
+  em:'Un entrenador está más pendiente de su celular que de corregir la técnica de los socios.',
+  pr:'«Entrenador personal para cada socio»',vip:'Un equipo de fútbol femenino quiere contratar membresías corporativas.',det:'las máquinas y los entrenadores'},
+ {s:'Andrés García',n:'Barbería El Filo',t:'Barbería urbana',e:'💈',cl:CL,st:['Sillas de corte','Lavado y barba','Caja'],m:'animada',l:'fría',h0:15,pk:3,
+  rush:'Hay fiesta de graduación: llegan ocho muchachos pidiendo fade.',
+  q:'Un cliente dice que el degradado le quedó disparejo.',
+  em:'El barbero nuevo tarda el doble y los clientes piden «solo con el jefe».',
+  pr:'«Sin esperas: pasá y te cortamos»',vip:'Un futbolista de la selección viene a cortarse antes de un partido.',det:'los cortes y la buena plática'},
+ {s:'Suhayla Godoy',n:'Veterinaria Patitas',t:'Veterinaria',e:'🐶',cl:['dueño de mascota','dueños de mascotas'],st:['Recepción','Consultorio','Grooming'],m:'silencio',l:'cálida',h0:15,pk:2,
+  rush:'Llega un perro atropellado en emergencia mientras la sala está llena.',
+  q:'Una dueña dice que bañaron a su gata con el champú equivocado y le dio alergia.',
+  em:'El asistente de grooming les tiene miedo a los perros grandes y los atiende con brusquedad.',
+  pr:'«Tratamos a tu mascota como familia»',vip:'Una rescatista con muchos seguidores trae a tres perritos rescatados.',det:'el cariño con las mascotas'},
+ {s:'Sofía Jaime',n:'CineLuz',t:'Sala de cine',e:'🎬',cl:['espectador','espectadores'],st:['Taquilla','Dulcería','Salas'],m:'animada',l:'tenue',h0:17,pk:3,
+  rush:'Estreno de la película más esperada del año: la fila llega hasta el estacionamiento.',
+  q:'Un espectador dice que el audio de la sala 2 se escuchó cortado toda la película.',
+  em:'El encargado de limpieza no da abasto y las salas no están listas a tiempo.',
+  pr:'«La mejor experiencia de cine de la ciudad»',vip:'Un colegio quiere alquilar una sala completa para una función privada.',det:'las palomitas y la comodidad de las butacas'},
+ {s:'Lindsay Mena',n:'Serena Spa & Nails',t:'Spa y centro de uñas',e:'💅',cl:['clienta','clientas'],st:['Recepción','Manicure','Cabinas de masaje'],m:'suave',l:'tenue',h0:13,pk:3,
+  rush:'Es víspera del Día de las Madres: todas quieren uñas para mañana.',
+  q:'Una clienta dice que el esmalte semipermanente se le levantó al día siguiente.',
+  em:'Una terapeuta de masaje les cuenta sus problemas personales a las clientas.',
+  pr:'«Tu momento de paz absoluta»',vip:'Una empresa quiere un paquete de spa para premiar a 15 colaboradoras.',det:'el ambiente relajante'},
+ {s:'Silvia Molina',n:'AutoBrillo Express',t:'Autolavado',e:'🚗',cl:CL,st:['Recepción','Bahías de lavado','Secado y detallado'],m:'animada',l:'fría',h0:12,pk:2,
+  rush:'Pasó un aguacero y ahora todos quieren quitarle el lodo al carro.',
+  q:'Un cliente encontró un rayón en la puerta y asegura que se lo hicieron en el lavado.',
+  em:'Un lavador no sabe usar la máquina de vapor nueva y la evita.',
+  pr:'«Lavado completo en 20 minutos»',vip:'Una empresa con 10 camionetas quiere un contrato mensual.',det:'el brillo y la rapidez'},
+ {s:'Roxana Monjarrez',n:'Salón de Eventos Los Robles',t:'Salón de eventos',e:'🎉',cl:['invitado','invitados'],st:['Recepción','Banquete','Pista y DJ'],m:'animada',l:'tenue',h0:18,pk:2,
+  rush:'Llegan 40 invitados que no estaban en la lista confirmada de la quinceañera.',
+  q:'La mamá de la quinceañera reclama que el pastel no es el diseño que encargó.',
+  em:'Los meseros contratados por el día no conocen el orden del protocolo.',
+  pr:'«Tu noche perfecta, sin preocupaciones»',vip:'Una wedding planner reconocida está entre los invitados evaluando el salón.',det:'la decoración y el banquete'},
+ {s:'Keling Obando',n:'Sakura Sushi Bar',t:'Restaurante de sushi',e:'🍣',cl:CL,st:['Barra de sushi','Mesas','Caja'],m:'suave',l:'tenue',h0:18,pk:2,
+  rush:'Es noche de 2x1 en rollos y el local se llenó en diez minutos.',
+  q:'Un cliente dice que el salmón no le pareció fresco.',
+  em:'Un mesero no sabe explicar los rollos a quienes nunca han comido sushi.',
+  pr:'«Ingredientes frescos cada día»',vip:'Un chef japonés de visita en Nicaragua quiere probar la barra.',det:'los rollos y la presentación'},
+ {s:'Hellen Obando',n:'Speak Up Academy',t:'Academia de inglés',e:'📚',cl:['estudiante','estudiantes'],st:['Recepción','Aulas','Atención a padres'],m:'silencio',l:'fría',h0:15,pk:2,
+  rush:'Inicio de ciclo: llegan padres a inscribir a sus hijos a última hora.',
+  q:'Un padre de familia dice que su hijo lleva tres meses y no ha avanzado nada.',
+  em:'Un docente nuevo improvisa las clases y los estudiantes se aburren.',
+  pr:'«Hablá inglés en 6 meses»',vip:'Un call center quiere capacitar a 50 colaboradores.',det:'los profesores y el método'},
+ {s:'Cristopher Reyes',n:'Taller AutoMaster',t:'Taller mecánico',e:'🔧',cl:CL,st:['Recepción','Fosas de reparación','Entrega'],m:'animada',l:'fría',h0:8,pk:1,
+  rush:'Empezaron las lluvias y llegan carros con frenos y limpiaparabrisas fallando.',
+  q:'Un cliente dice que le cobraron un repuesto que no le cambiaron.',
+  em:'Un mecánico usa puros términos técnicos y los clientes sienten que los quieren engañar.',
+  pr:'«Presupuesto claro, sin sorpresas»',vip:'Una cooperativa de taxis quiere que le des mantenimiento a 20 unidades.',det:'la honestidad del diagnóstico'},
+ {s:'Kamila Rodríguez',n:'Sonrisa Dental',t:'Clínica dental',e:'🦷',cl:['paciente','pacientes'],st:['Recepción','Sillones dentales','Rayos X'],m:'suave',l:'fría',h0:14,pk:2,
+  rush:'Un colegio manda a 12 niños a su chequeo dental anual.',
+  q:'Una paciente dice que le dolió muchísimo la limpieza y que nadie le avisó.',
+  em:'La asistente dental no explica los procedimientos y los pacientes se ponen tensos.',
+  pr:'«Odontología sin dolor»',vip:'Una reina de belleza local viene a cotizar un diseño de sonrisa.',det:'el cuidado para no causar dolor'},
+ {s:'Camila Ruiz',n:'Helados La Nube',t:'Heladería en centro comercial',e:'🍦',cl:CL,st:['Vitrina','Caja','Mesas'],m:'animada',l:'fría',h0:14,pk:3,
+  rush:'Terminó una función infantil en el cine del mall: llegan 30 niños con sus papás.',
+  q:'Una mamá dice que el cono se le derritió al niño porque tardaron mucho.',
+  em:'La cajera nueva se confunde con los combos y la fila no avanza.',
+  pr:'«Helado artesanal hecho hoy»',vip:'Una empresa de cumpleaños infantiles quiere ser cliente frecuente.',det:'los sabores artesanales'},
+ {s:'Noel Safrian',n:'Pixel Arena',t:'Café gamer y arcade',e:'🎮',cl:['jugador','jugadores'],st:['Recepción','Estaciones de juego','Snack bar'],m:'animada',l:'tenue',h0:16,pk:3,
+  rush:'Hay torneo de un juego de moda y llegan 25 jugadores al mismo tiempo.',
+  q:'Un jugador dice que la computadora se trabó en plena partida y perdió su tiempo pagado.',
+  em:'El encargado se pone a jugar en las estaciones en lugar de atender.',
+  pr:'«Cero lag, garantizado»',vip:'Un streamer nicaragüense quiere transmitir en vivo desde tu local.',det:'los equipos y el ambiente'},
+ {s:'Liz Salguera',n:'Hostal Ola Azul',t:'Hostal de playa en San Juan del Sur',e:'🏖️',cl:['viajero','viajeros'],st:['Recepción','Bar de playa','Tours y actividades'],m:'animada',l:'cálida',h0:15,pk:3,
+  rush:'Llega un grupo de surfistas australianos sin reserva.',
+  q:'Un viajero dice que le prometieron vista al mar y le dieron un cuarto sin ventana.',
+  em:'Un voluntario extranjero de recepción no conoce los precios de los tours.',
+  pr:'«Vista al mar desde cada habitación»',vip:'Una youtuber de viajes graba un video sobre hostales de Centroamérica.',det:'la vibra de la playa'},
+ {s:'Itzel Solórzano',n:'Lumière Estudio Fotográfico',t:'Estudio fotográfico',e:'📸',cl:CL,st:['Recepción','Set de fotos','Edición y entrega'],m:'suave',l:'fría',h0:14,pk:3,
+  rush:'Llegan diez graduandos a la vez para sus fotos de toga.',
+  q:'Una clienta dice que sus fotos tienen un retoque exagerado y no se reconoce.',
+  em:'El editor está atrasado con las entregas y no les avisa a los clientes.',
+  pr:'«Tus fotos editadas en 48 horas»',vip:'Una marca de ropa local quiere contratar una sesión de catálogo.',det:'la calidad de las fotos'},
+ {s:'María Eugenia Talavera',n:'Lavandería Burbujas',t:'Lavandería exprés',e:'🧺',cl:CL,st:['Recepción','Lavado','Planchado y entrega'],m:'suave',l:'fría',h0:12,pk:3,
+  rush:'Un hotel cercano manda 60 kilos de ropa de cama de urgencia.',
+  q:'Un cliente dice que se le perdió una camisa de vestir importante.',
+  em:'La planchadora usa una técnica distinta a la del resto y las prendas salen desiguales.',
+  pr:'«Tu ropa lista en 3 horas»',vip:'Un gimnasio quiere contratarte para lavar sus toallas a diario.',det:'la puntualidad en la entrega'},
+ {s:'Andrea Téllez',n:'Panadería El Trigal',t:'Panadería y repostería',e:'🥐',cl:CL,st:['Hornos','Vitrina','Pedidos especiales'],m:'suave',l:'cálida',h0:4,pk:1,
+  rush:'Es día de rosquillas: se forma una fila antes de que salga la primera horneada.',
+  q:'Una clienta dice que el pastel de cumpleaños de su hija tiene el nombre mal escrito.',
+  em:'El panadero de madrugada llega tarde seguido y el pan sale con retraso.',
+  pr:'«Pan caliente a cualquier hora»',vip:'Una cadena de supermercados quiere surtir tu pan en sus tiendas.',det:'el pan recién horneado'},
+ {s:'Danilo Villanueva',n:'RapiEntrega',t:'Delivery de comida',e:'🛵',cl:CL,st:['Recepción de pedidos','Cocina aliada','Repartidores'],m:'animada',l:'fría',h0:18,pk:2,
+  rush:'Llueve fuerte y todo el mundo está pidiendo comida a domicilio.',
+  q:'Un cliente dice que su pedido llegó frío y con el refresco derramado.',
+  em:'Un repartidor no usa el uniforme y llega a las casas mal presentado.',
+  pr:'«Entrega en 30 minutos o es gratis»',vip:'Una empresa quiere contratar el almuerzo diario de sus 40 empleados.',det:'la rapidez y la amabilidad'}
+];
+
+/* =========================================================
+   PARÁMETROS
+   ========================================================= */
+const Q = new URLSearchParams(location.search);
+const HOUR = Q.has('rapido') ? 15000 : 60000;   // ms reales por hora simulada
+const TICK = 200;
+const SC = HOUR/60000;   // escala de tiempos de servicio y paciencia
+const BUDGET = 9000, STAFF_COST = 1200, REF_COST = 1000;
+const MUS = {silencio:0, suave:200, animada:300};
+const LUZ = ['cálida','fría','tenue'];
+const INV = [
+ {k:'emp',  n:'Capacitación en empowerment', d:'Tu personal sale autorizado para resolver quejas en el momento, sin pedir permiso.', c:1500},
+ {k:'brief',n:'Briefing de marketing interno', d:'Reunión antes del turno: el equipo conoce la promesa de la marca y trabaja más coordinado.', c:500},
+ {k:'kit',  n:'Evidencia física cuidada', d:'Uniformes, señalética clara, limpieza profunda y aroma: el espacio comunica calidad.', c:1200}
+];
+const TYPES = [
+ {k:'Apurado',i:'⏱️',p:.65,b:-.1,w:1,pr:.25},
+ {k:'Primera vez',i:'🆕',p:1.1,b:0,w:1,pr:.25},
+ {k:'Frecuente',i:'🔁',p:1.35,b:.2,w:1,pr:.25},
+ {k:'Exigente',i:'🧐',p:.9,b:-.35,w:1,pr:.17},
+ {k:'Influencer',i:'📱',p:.8,b:-.1,w:3,pr:.08}
+];
+const NAMES = ['Doña Tere','Don Chepe','Yaoska','Kevin','Fernanda','Don Mundo','Scarleth','Bayardo','Hazel','Jonathan','Doña Chilo','Marlon','Ivania','Ervin','Karla','Don Julio','Massiel','Elvin','Grethel','Darling','Xiomara','Allan','Doña Mercedes','Jader','Lesbia','Byron','Nohemí','Freddy'];
+const ST_W = [.5,.3,.2];
+const SALT = 'UAM-MS-2026-turno';
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const rnd = (a,b) => a + Math.random()*(b-a);
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const money = v => 'C$ ' + Math.round(v).toLocaleString('en-US');
+const starStr = v => { const f=Math.round(v); return '★'.repeat(f)+'☆'.repeat(5-f); };
+function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return h.toString(36);}
+function enc(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o))));}
+function dec(s){return JSON.parse(decodeURIComponent(escape(atob(s))));}
+function ls(k,v){try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null;}}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo(0,0);}
+function fmtHour(h){ h=((h%24)+24)%24; const H=Math.floor(h), M=Math.floor((h-H)*60); const ap=H<12?'a. m.':'p. m.'; const h12=((H+11)%12)+1; return h12+':'+String(M).padStart(2,'0')+' '+ap; }
+let bubT;
+function say(txt,ms=4200){ const b=$('bub'); b.innerHTML=txt; b.classList.add('on'); clearTimeout(bubT); bubT=setTimeout(()=>b.classList.remove('on'),ms); }
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+let S, timer;
+function newState(idx){
+  return {bi:idx,b:B[idx],staff:[2,1,1],music:'suave',light:'cálida',emp:false,brief:false,kit:false,
+    pool:0,refs:0,extraCost:0,t:0,acc:0,rushLeft:0,rushAcc:0,ratings:[],served:0,lost:0,
+    queues:[[],[],[]],serving:[[],[],[]],eff:1,morale:0,outUntil:0,slowSt:-1,slowUntil:0,
+    decisions:[],events:[],paused:false,done:{},cid:0,log:[]};
+}
+const prepCost = () => S.staff.reduce((a,b)=>a+b,0)*STAFF_COST + MUS[S.music] + INV.reduce((a,i)=>a+(S[i.k]?i.c:0),0);
+const totalCost = () => prepCost() + S.extraCost;
+function avg(){ let s=0,w=0; S.ratings.forEach(r=>{s+=r.r*r.w;w+=r.w;}); return w?s/w:0; }
+function addR(r,w=1){ S.ratings.push({r:clamp(r,1,5),w}); }
+function log(t,c=''){ S.log.push({t:fmtHour(S.b.h0+S.t/HOUR)+'  '+t,c}); if(S.log.length>40)S.log.shift(); }
+
+/* =========================================================
+   INICIO
+   ========================================================= */
+function initStart(){
+  const sel=$('selEst');
+  B.map((b,i)=>({b,i})).sort((x,y)=>x.b.s.localeCompare(y.b.s,'es')).forEach(({b,i})=>{
+    const o=document.createElement('option'); o.value=i; o.textContent=b.s; sel.appendChild(o);
+  });
+  sel.onchange=()=>{
+    if(sel.value===''){ $('btnStart').disabled=true; return; }
+    const b=B[+sel.value];
+    $('asig').innerHTML=`<div class="em">${b.e}</div><div><p>TU NEGOCIO ASIGNADO</p><h3>${b.n}</h3><p>${b.t} · turno ${fmtHour(b.h0)} – ${fmtHour(b.h0+6)}</p></div>`;
+    $('btnStart').disabled=false;
+  };
+  $('btnStart').onclick=()=>{ S=newState(+sel.value); initPrep(); show('s-prep'); $('dock').style.display='flex';
+    say(`¡Hola! Soy <b>Cacaito</b>, tu supervisor de turno. Pensá qué ambiente espera un ${S.b.cl[0]} de un negocio como <b>${S.b.n}</b>.`,7000); };
+}
+
+/* =========================================================
+   PREPARACIÓN
+   ========================================================= */
+function initPrep(){
+  const b=S.b;
+  $('topInfo').textContent=b.e+' '+b.n+' · '+b.s;
+  $('prepTicket').innerHTML=`<div style="font-size:40px">${b.e}</div><h4>${b.n}</h4><div>${b.t}</div><hr>
+   <div class="fila"><span>GERENTE</span><b>${b.s}</b></div>
+   <div class="fila"><span>TURNO</span><b>${fmtHour(b.h0)} – ${fmtHour(b.h0+6)}</b></div>
+   <div class="fila"><span>ESTACIONES</span><b>${b.st.length}</b></div><hr>
+   <div style="font-size:12px">Ojo: el flujo de ${b.cl[1]} no es parejo. Hay una hora pico y pueden surgir imprevistos.</div>`;
+  renderPrep();
+  $('btnAbrir').onclick=startGame;
+}
+function renderPrep(){
+  const b=S.b;
+  $('prepStaff').innerHTML=b.st.map((s,i)=>`<div class="est-row"><div><b>${s}</b><div class="zona">${['Estación principal','Estación de apoyo','Estación complementaria'][i]}</div></div>
+    <div class="stepper"><button onclick="chg(${i},-1)">−</button><b>${S.staff[i]}</b><button onclick="chg(${i},1)">+</button></div></div>`).join('');
+  $('chMus').innerHTML=Object.keys(MUS).map(m=>`<button class="chip ${S.music===m?'on':''}" onclick="S.music='${m}';renderPrep()">${{silencio:'🔇 Silencio',suave:'🎷 Suave',animada:'🔊 Animada'}[m]} <small>${MUS[m]?'· '+money(MUS[m]):''}</small></button>`).join('');
+  $('chLuz').innerHTML=LUZ.map(l=>`<button class="chip ${S.light===l?'on':''}" onclick="S.light='${l}';renderPrep()">${{'cálida':'🕯️ Cálida','fría':'💡 Fría y brillante','tenue':'🌙 Tenue'}[l]}</button>`).join('');
+  $('prepInv').innerHTML=INV.map(i=>`<div class="inv ${S[i.k]?'on':''}" onclick="S.${i.k}=!S.${i.k};renderPrep()"><div class="box">${S[i.k]?'✓':''}</div><div><b>${i.n}</b><small>${i.d}</small></div><div class="precio">${money(i.c)}</div></div>`).join('');
+  const c=prepCost(), over=c>BUDGET;
+  $('bGast').textContent=money(c); $('bTot').textContent='de '+money(BUDGET);
+  $('bBar').className='barra'+(over?' over':''); $('bBar').firstElementChild.style.width=Math.min(100,c/BUDGET*100)+'%';
+  $('bNota').innerHTML=over?'<span class="ko">Te estás pasando del presupuesto. Podés abrir igual, pero te va a costar puntos.</span>':`Te quedan ${money(BUDGET-c)} para refuerzos o decisiones durante el turno.`;
+  $('btnAbrir').disabled=S.staff.some(x=>x===0);
+  if(S.staff.some(x=>x===0)) $('bNota').innerHTML='<span class="ko">Cada estación necesita al menos una persona.</span>';
+}
+window.chg=(i,d)=>{ S.staff[i]=clamp(S.staff[i]+d,0,5); renderPrep(); };
+
+/* =========================================================
+   TURNO
+   ========================================================= */
+const SCHEDULE = [
+  {at:.8, fn:()=>dilemma('em')},
+  {at:1.6,fn:()=>eventRush()},
+  {at:2.5,fn:()=>dilemma('q')},
+  {at:3.3,fn:()=>(S.bi%2? eventOutage(): eventStaffOut())},
+  {at:4.0,fn:()=>dilemma('vip')},
+  {at:4.8,fn:()=>dilemma('pr')}
+];
+function startGame(){
+  show('s-game');
+  S.prep={staff:[...S.staff],music:S.music,light:S.light,cost:prepCost()};
+  if(S.brief){ S.eff*=1.1; }
+  log(`Abrimos ${S.b.n}. ¡Buen turno!`,'a');
+  say(`¡Abrimos! Mirá las barras de paciencia: si se ponen rojas, mové personal a esa estación con <b>+</b> y <b>−</b>.`,6500);
+  renderGame(true);
+  timer=setInterval(tick,TICK);
+}
+function rate(h){ return 9.5 + 7*Math.exp(-Math.pow(h-S.b.pk-.5,2)/1.5); }
+function pickType(){ let r=Math.random(),a=0; for(const t of TYPES){a+=t.pr; if(r<a) return t;} return TYPES[0]; }
+function spawn(){
+  let r=Math.random(),st=0,a=0; for(let i=0;i<3;i++){a+=ST_W[i]; if(r<a){st=i;break;}}
+  const ty=pickType();
+  S.queues[st].push({id:++S.cid,name:pick(NAMES),ty,pat:22000*SC*ty.p*rnd(.85,1.15),wait:0,st});
+}
+function tick(){
+  if(S.paused) return;
+  S.t+=TICK;
+  const h=S.t/HOUR;
+  // llegadas
+  S.acc+=rate(h)*TICK/HOUR;
+  while(S.acc>=1){ spawn(); S.acc--; }
+  if(S.rushLeft>0){ S.rushAcc+=TICK; if(S.rushAcc>=900){ S.rushAcc=0; S.rushLeft--; spawn(); } }
+  // atención
+  const outage = S.t<S.outUntil;
+  for(let i=0;i<3;i++){
+    let speed=S.eff*(outage?.4:1)*(S.slowSt===i&&S.t<S.slowUntil?.3:1);
+    const sv=S.serving[i];
+    for(let k=sv.length-1;k>=0;k--){
+      sv[k].rem-=TICK*speed;
+      if(sv[k].rem<=0){ finish(sv[k].c); sv.splice(k,1); }
+    }
+    const q=S.queues[i];
+    while(sv.length<S.staff[i] && q.length){ const c=q.shift(); const tot=15000*SC*rnd(.8,1.2); sv.push({c,rem:tot,tot}); }
+    for(let k=q.length-1;k>=0;k--){
+      q[k].wait+=TICK;
+      if(q[k].wait>q[k].pat){ const c=q.splice(k,1)[0]; S.lost++; addR(1,c.ty.w); log(`${c.name} (${c.ty.k.toLowerCase()}) se fue molesto de ${S.b.st[i]}: esperó demasiado.`,'m');
+        if(c.ty.k==='Influencer') say(`😬 Se fue un <b>influencer</b> sin ser atendido. Eso pesa triple en tu reputación.`); }
+    }
+  }
+  // agenda
+  SCHEDULE.forEach((e,i)=>{ if(!S.done[i] && h>=e.at){ S.done[i]=1; e.fn(); } });
+  if(h>=6) return endGame();
+  renderGame();
+}
+function finish(c){
+  let r=3.4;
+  r+= S.music===S.b.m ? .35 : -.25;
+  r+= S.light===S.b.l ? .35 : -.25;
+  if(S.kit) r+=.25;
+  if(S.brief) r+=.1;
+  const w=Math.min(1,c.wait/c.pat);
+  r+= .6 - 1.3*w;
+  r+= c.ty.b + S.morale;
+  r=clamp(r,1,5);
+  addR(r,c.ty.w); S.served++;
+  if(Math.random()<.18) log(`${c.name} salió de ${S.b.st[c.st]} con ${r.toFixed(1)} ★`, r>=4?'b':(r<2.5?'m':''));
+}
+
+/* ---------- Render del juego ---------- */
+function renderGame(full){
+  const b=S.b, h=S.t/HOUR;
+  $('hClock').textContent=fmtHour(b.h0+h);
+  $('hHora').textContent=`HORA ${Math.min(6,Math.floor(h)+1)} DE 6 · ${b.n.toUpperCase()}`;
+  const a=avg();
+  $('hSat').textContent=a?a.toFixed(1):'—'; $('hStars').textContent=a?starStr(a):'';
+  const c=totalCost();
+  $('hCost').innerHTML=money(c)+' <span style="font-size:13px;color:var(--tenue)">/ '+money(BUDGET)+'</span>';
+  $('hBar').className='barra'+(c>BUDGET?' over':''); $('hBar').firstElementChild.style.width=Math.min(100,c/BUDGET*100)+'%';
+  $('hSrv').textContent=S.served; $('hLost').textContent=S.lost; $('hPool').textContent=S.pool;
+  $('btnRef').disabled=S.refs>=3;
+  const outage=S.t<S.outUntil;
+  $('stations').innerHTML=b.st.map((s,i)=>{
+    const sv=S.serving[i], q=S.queues[i];
+    const dots=Array.from({length:S.staff[i]},(_,k)=>`<i class="${k<sv.length?'':'libre'}"></i>`).join('');
+    const svH=sv.map(x=>`<div class="cli srv"><span class="ic">${x.c.ty.i}</span><span class="nm">${x.c.name}</span><div class="pb"><i style="width:${(1-x.rem/x.tot)*100}%"></i></div></div>`).join('');
+    const vis=q.slice(0,6), more=q.length-vis.length;
+    const qH=vis.map(c=>{const p=1-c.wait/c.pat; return `<div class="cli"><span class="ic">${c.ty.i}</span><span class="nm">${c.name} · ${c.ty.k}</span><div class="pb ${p<.3?'bad':p<.6?'warn':''}"><i style="width:${p*100}%"></i></div></div>`;}).join('');
+    const lento = outage || (S.slowSt===i && S.t<S.slowUntil);
+    return `<div class="station ${lento?'lento':''}">
+      <div class="st-head"><h3>${s}</h3><div class="stepper"><button onclick="mv(${i},-1)">−</button><b>${S.staff[i]}</b><button onclick="mv(${i},1)">+</button></div></div>
+      <div class="staff">${dots}</div>
+      ${lento?'<div class="mas">⚠ Atención más lenta</div>':''}
+      <div class="zona">Atendiendo</div>${svH||'<div class="zona" style="opacity:.5">—</div>'}
+      <div class="zona" style="margin-top:6px">En espera (${q.length})</div>${qH}${more>0?`<div class="mas">+${more} más esperando…</div>`:''}
+    </div>`;
+  }).join('');
+  $('log').innerHTML=S.log.slice().reverse().map(l=>`<div class="${l.c}">${l.t}</div>`).join('');
+}
+window.mv=(i,d)=>{
+  if(d<0 && S.staff[i]>0){ S.staff[i]--; S.pool++; }
+  else if(d>0 && S.pool>0){ S.pool--; S.staff[i]++; }
+  else if(d>0) say('No tenés personal libre. Quitá a alguien de otra estación con <b>−</b> o contratá un refuerzo.');
+  renderGame();
+};
+$('btnRef').onclick=()=>{ if(S.refs>=3) return; S.refs++; S.pool++; S.extraCost+=REF_COST; S.events.push('refuerzo'); log(`Llamaste a un refuerzo (+${money(REF_COST)}).`,'a'); renderGame(); };
+
+/* ---------- Eventos ---------- */
+function notice(tag,title,txt,after){
+  S.paused=true;
+  $('modal').innerHTML=`<span class="tag">${tag}</span><h3>${title}</h3><div class="sit"><svg class="cacaito" style="width:70px"><use href="#cacaito"/></svg><p>${txt}</p></div><button class="btn" id="mOk">Seguir con el turno →</button>`;
+  $('veil').classList.add('on');
+  $('mOk').onclick=()=>{ $('veil').classList.remove('on'); S.paused=false; after&&after(); };
+}
+function eventRush(){
+  S.rushLeft=9; S.events.push('rush');
+  notice('Imprevisto','¡Llegó la ola!',S.b.rush+' <br><br><b>Revisá tus estaciones:</b> la principal va a recibir la mayor parte.',()=>log('¡Llegó un grupo grande!','m'));
+}
+function eventOutage(){
+  S.outUntil=S.t+HOUR*.35; S.events.push('apagon');
+  notice('Imprevisto','Se fue la luz en el sector','Durante un rato todo funciona más lento: sistema de cobro, equipos y comunicación. Tus '+S.b.cl[1]+' van a notar la espera.',()=>log('Apagón: la atención va más lenta.','m'));
+}
+function eventStaffOut(){
+  let mx=0; for(let i=1;i<3;i++) if(S.staff[i]>S.staff[mx]) mx=i;
+  if(S.staff[mx]>1){ S.staff[mx]--; } else if(S.pool>0){ S.pool--; }
+  S.events.push('ausencia');
+  notice('Imprevisto','Una baja inesperada',`Una persona de <b>${S.b.st[mx]}</b> tuvo que retirarse por una emergencia familiar. Reorganizá a tu equipo.`,()=>log('Perdiste a una persona del equipo.','m'));
+}
+
+/* ---------- Dilemas ---------- */
+function dilemma(type){
+  const b=S.b, cl=b.cl[0];
+  const D={
+    em:{tag:'Tu equipo · Marketing interno',title:'Algo no anda bien detrás del mostrador',sit:b.em,ops:[
+      {t:'Darle un mini-briefing de 5 minutos y acompañarle en sus primeras atenciones.',c:S.brief?0:200,f:()=>{S.eff*=S.brief?1.15:1.1;S.morale+=.1;},
+       fb:'Tratar al empleado como un <b>cliente interno</b> (Berry, 1981) da resultado: el equipo trabajó más rápido y con mejor actitud el resto del turno.'+(S.brief?' Como ya habías hecho el briefing del turno, el efecto fue mayor.':''),ok:1},
+      {t:'Ignorarlo: lo primero es atender a los clientes.',c:0,f:()=>{S.eff*=.85;S.morale-=.1;},
+       fb:'El costo es invisible pero real: según la <b>cadena servicio-utilidad</b> (Heskett et al., 1994), la insatisfacción interna se le pasa al cliente. Tu equipo se volvió más lento.',ok:0},
+      {t:'Llamarle la atención frente a los clientes para que aprenda.',c:0,f:()=>{S.eff*=.8;S.morale-=.2;addR(2,2);},
+       fb:'El <b>backstage</b> se volvió escenario: los clientes vieron el conflicto y el clima emocional del servicio se dañó.',ok:0}]},
+    q:{tag:'Momento de la verdad · Queja',title:`Un ${cl} está molesto`,sit:b.q,ops:[
+      {t:`Que el empleado lo resuelva en el momento y compense al ${cl}.`,c:300,f:()=>addR(S.emp?5:3,3),
+       fb:S.emp?'Gracias a la capacitación, tu empleado tenía <b>autoridad real</b> para resolver. Resolver rápido y en el primer contacto puede dejar al cliente más leal que antes (Hart et al., 1990; Bowen y Lawler, 1992).'
+               :'Le pediste que resolviera, pero nunca lo capacitaste ni le diste autoridad. Dudó, consultó y se tardó: el <b>empowerment sin preparación</b> se queda en discurso (Bowen y Lawler, 1992).',ok:S.emp?1:.5},
+      {t:'Que te llamen a vos, el gerente, para decidir.',c:150,f:()=>{addR(4,3);S.slowSt=0;S.slowUntil=S.t+HOUR*.3;},
+       fb:'Se resolvió, pero tardó y frenó la estación principal mientras atendías el caso. En la recuperación del servicio, el cliente valora la <b>solución</b> y también la <b>velocidad</b>.',ok:.5},
+      {t:'Aplicar la política: «No hacemos devoluciones ni compensaciones».',c:0,f:()=>addR(1,3),
+       fb:'Te ahorraste dinero hoy, pero perdiste a ese cliente y probablemente a su círculo. Una queja bien resuelta es una oportunidad de fidelización, y la desperdiciaste.',ok:0}]},
+    vip:{tag:'Cliente de alto valor',title:'Llegó alguien importante',sit:b.vip,ops:[
+      {t:'Darle trato preferencial y atenderle antes que a la fila.',c:0,f:()=>{addR(5,2); S.queues.forEach(q=>q.forEach(c=>c.wait+=c.pat*.3)); addR(2,2);},
+       fb:'Tu VIP salió feliz, pero los demás notaron que alguien se saltó la fila. La <b>justicia percibida</b> también es parte de la experiencia de servicio.',ok:.5},
+      {t:'Atenderle con el mismo estándar que a todos, con un detalle personalizado.',c:200,f:()=>addR((S.kit||S.brief)?5:4,3),
+       fb:(S.kit||S.brief)?'Sostuviste el estándar y agregaste un detalle memorable. Con un espacio cuidado y un equipo preparado, lograste una <b>experiencia</b> y no solo un servicio (Pine y Gilmore, 1998).'
+               :'Buena decisión en equidad, pero sin evidencia física cuidada ni un equipo alineado, la experiencia fue correcta, no memorable (Pine y Gilmore, 1998).',ok:1},
+      {t:'Que le atienda quien esté libre, como a cualquiera.',c:0,f:()=>addR(2,3),
+       fb:'El momento de la verdad más importante del turno quedó al azar. Una visita de alto valor merece preparación, no improvisación.',ok:0}]},
+    pr:{tag:'Promesa de marca',title:'Tu publicidad te está mirando',sit:`Tu publicidad promete ${b.pr}, pero con la carga de hoy no lo estás cumpliendo.`,ops:[
+      {t:'Reforzar el personal para cumplir lo prometido, aunque cueste.',c:REF_COST,f:()=>{S.pool++;addR(4.5,2);},
+       fb:'Invertiste para cumplir. La <b>coherencia entre lo que comunicás y lo que entregás</b> es la base de la confianza en servicios. Tenés una persona más libre: asignala.',ok:1},
+      {t:`Avisar con honestidad a cada ${cl} cómo está la situación y ofrecer un detalle.`,c:300,f:()=>addR(4,2),
+       fb:'Gestionaste expectativas: el cliente tolera mejor una espera explicada que una sorpresa. Bien, aunque la promesa original sigue siendo un riesgo para tu marca.',ok:1},
+      {t:'Seguir como si nada: nadie lee la letra pequeña.',c:0,f:()=>addR(2,3),
+       fb:'Prometer lo que no cumplís eleva las expectativas y asegura la decepción. Esta noche, tu publicidad le habló a un negocio que no existía.',ok:0}]}
+  }[type];
+  S.paused=true;
+  $('modal').innerHTML=`<span class="tag">${D.tag}</span><h3>${D.title}</h3>
+    <div class="sit"><svg class="cacaito" style="width:70px"><use href="#cacaito"/></svg><p>${D.sit}</p></div>
+    ${D.ops.map((o,i)=>`<button class="op" data-i="${i}"><b>${'ABC'[i]}</b>${o.t}<small>${o.c?'Costo: '+money(o.c):'Sin costo directo'}</small></button>`).join('')}`;
+  $('veil').classList.add('on');
+  $('modal').querySelectorAll('.op').forEach(btn=>btn.onclick=()=>{
+    const o=D.ops[+btn.dataset.i]; S.extraCost+=o.c; o.f();
+    S.decisions.push({tag:D.tag,title:D.title,sit:D.sit,choice:o.t,fb:o.fb,ok:o.ok});
+    $('modal').innerHTML=`<span class="tag">${D.tag}</span><h3>Consecuencia</h3><div class="fb">${o.fb}</div><button class="btn" id="mOk">Seguir con el turno →</button>`;
+    $('mOk').onclick=()=>{ $('veil').classList.remove('on'); S.paused=false; renderGame(); };
+  });
+}
+
+/* =========================================================
+   CIERRE
+   ========================================================= */
+function endGame(){
+  clearInterval(timer);
+  // los que están en servicio terminan; los que esperan se quedan sin atender
+  S.serving.forEach(sv=>sv.forEach(x=>finish(x.c)));
+  S.queues.forEach(q=>q.forEach(c=>{S.lost++;addR(1,c.ty.w);}));
+  const a=avg(), cost=totalCost(), tot=S.served+S.lost;
+  const pStars=(a-1)/4*70;
+  const pBud= cost<=BUDGET ? 20 : Math.max(0,20-(cost-BUDGET)/100);
+  const pSrv= tot? S.served/tot*10 : 0;
+  const score=Math.round(clamp(pStars+pBud+pSrv,0,100));
+  const k='tn-int-'+S.bi; const att=(+ls(k)||0)+1; ls(k,String(att));
+  const payload={v:1,n:S.b.s,b:S.bi,sc:score,st:+a.toFixed(2),at:S.served,lo:S.lost,co:Math.round(cost),i:att,d:new Date().toISOString().slice(0,16)};
+  const b64=enc(payload); const code='TN1.'+b64+'.'+hash(b64+SALT);
+  $('dock').style.display='none';
+  $('fNeg').textContent=S.b.e+' '+S.b.n+' · '+S.b.s;
+  $('fScore').textContent=score;
+  $('fStars').innerHTML=`<span class="estrellas">${starStr(a)}</span> ${a.toFixed(1)} de satisfacción`;
+  $('fKpis').innerHTML=[['Atendidos',S.served],['Perdidos',S.lost],['Costo',money(cost)],['Intento',att]].map(x=>`<div class="kpi"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');
+  $('fCode').textContent=code;
+  $('btnCopy').onclick=()=>{ navigator.clipboard?.writeText(code).then(()=>{$('btnCopy').textContent='¡Copiado! ✓';}).catch(()=>{}); };
+  $('btnAgain').onclick=()=>location.reload();
+  $('fReviews').innerHTML=reviews(a);
+  $('fDeb').innerHTML=debrief(a,cost);
+  show('s-end');
+}
+
+function reviews(a){
+  const b=S.b, lostR=S.lost/Math.max(1,S.served+S.lost);
+  const ambOK=S.music===b.m && S.light===b.l, ambBad=S.music!==b.m && S.light!==b.l;
+  const q=S.decisions.find(d=>d.tag.includes('Queja'));
+  const colors=['#1a73e8','#e8710a','#188038','#d93025','#9334e6','#12b5cb'];
+  const lines=(st)=>{
+    const op = st>=4.5?pick(['¡Qué experiencia!','Superó mis expectativas.','Definitivamente vuelvo.']) : st>=3.5?pick(['Buena experiencia en general.','Me gustó, aunque hay detalles.','Recomendado, con algunos peros.']) : st>=2.5?pick(['Regular.','Esperaba más.','Ni fu ni fa.']) : pick(['Mala experiencia.','No vuelvo.','Qué decepción.']);
+    const amb = ambOK?pick([`El ambiente está muy bien logrado para un lugar así: se siente que alguien pensó en cada detalle.`,`La música y la luz, perfectas para el lugar.`,`Se siente cómodo estar ahí, el ambiente acompaña.`]) : ambBad?pick([`El ambiente no cuadra con el lugar: la música y la luz no van con lo que uno espera de ${b.t.toLowerCase()}.`,`Raro el ambiente, como que no es para este tipo de negocio.`,`La música y la iluminación me incomodaron.`]) : pick([`El ambiente está bien, aunque algo no termina de encajar.`,`El ambiente es aceptable, nada especial.`]);
+    const w = lostR>.3?pick([`Esperé demasiado y vi a varias personas irse sin ser atendidas.`,`La espera fue eterna, el personal no daba abasto.`,`Mucha gente esperando y poco personal.`]) : lostR>.12?pick([`Hubo un rato de bastante espera.`,`En la hora pico se puso lento.`]) : pick([`Me atendieron rápido, incluso en la hora pico.`,`Cero esperas, muy ágiles.`]);
+    const k = S.kit?' El personal bien presentado y todo limpio y señalizado.':'';
+    const det = st>=3.5?` Lo mejor: ${b.det}.`:` Lástima, porque ${b.det} tiene potencial.`;
+    return `${op} ${amb} ${w}${k}${det}`;
+  };
+  const rs=[clamp(Math.round(a+.6),1,5),clamp(Math.round(a),1,5),clamp(Math.round(a-.8),1,5)];
+  let out=rs.map((st,i)=>{
+    const nm=pick(NAMES).replace(/^(Don|Doña) /,'')+' '+pick(['M.','R.','G.','L.','C.','P.']);
+    let txt=lines(st);
+    if(i===2 && q) txt += q.ok>=1?' Tuve un problema y lo resolvieron en el momento, eso habla bien del lugar.' : q.ok>0?' Tuve un problema; lo resolvieron, pero tardaron bastante.' : ' Tuve un problema y solo me dijeron que «es la política». Pésimo.';
+    return `<div class="gmaps"><div class="gm-h"><div class="av" style="background:${colors[(i+S.bi)%colors.length]}">${nm[0]}</div><div><b>${nm}</b><small>Local Guide · ${pick(['12','37','5','84','21'])} reseñas</small></div></div>
+      <div class="gm-st">${'★'.repeat(st)}${'☆'.repeat(5-st)}<span>hace ${pick(['1 hora','2 horas','un momento'])}</span></div><p>${txt}</p></div>`;
+  }).join('');
+  return out;
+}
+
+function debrief(a,cost){
+  const b=S.b, p=S.prep, it=[];
+  const mN={silencio:'silencio',suave:'música suave',animada:'música animada'};
+  const okM=p.music===b.m, okL=p.light===b.l;
+  it.push({t:'Servicescape · Condiciones ambientales',h:okM&&okL?'Ambiente coherente con tu negocio':'El ambiente no terminó de encajar',ok:okM&&okL,
+    p:`Elegiste ${mN[p.music]} y luz ${p.light}. Para ${b.t.toLowerCase()}, lo más coherente era <b>${mN[b.m]}</b> y <b>luz ${b.l}</b>. Bitner (1992) explica que el ambiente físico influye en las emociones, la percepción de calidad y la conducta de clientes <i>y</i> empleados. Cada ${b.cl[0]} atendido sumó o restó por esto.`});
+  it.push({t:'Evidencia física',h:S.kit?'Invertiste en tangibilizar tu servicio':'Dejaste la evidencia física al azar',ok:S.kit,
+    p:S.kit?'Uniformes, señalética y limpieza son <b>pistas tangibles</b> de un servicio intangible: el cliente las usa para juzgar la calidad antes y durante la experiencia.':'El servicio es intangible: el cliente busca pistas tangibles (uniformes, limpieza, señalética) para juzgar la calidad. Sin ellas, tu experiencia pierde credibilidad.'});
+  const tot=S.served+S.lost, lr=S.lost/Math.max(1,tot);
+  it.push({t:'Capacidad y demanda',h:lr<.12?'Gestionaste bien la capacidad':lr<.3?'La capacidad se te quedó corta en algunos momentos':'La demanda te desbordó',ok:lr<.12,
+    p:`Perdiste ${S.lost} de ${tot} ${b.cl[1]} (${Math.round(lr*100)} %). Arrancaste con ${p.staff.join(' / ')} personas por estación${S.refs?` y llamaste ${S.refs} refuerzo(s)`:''}. Los servicios son <b>perecederos</b>: la capacidad ociosa de la hora valle no se guarda para la hora pico (Lovelock y Wirtz, 2015).`});
+  it.push({t:'Empowerment',h:S.emp?'Tu equipo tenía autoridad para resolver':'Tu equipo no tenía autoridad para resolver',ok:S.emp,
+    p:S.emp?'Invertiste en capacitar y autorizar a tu personal. El empowerment funciona cuando hay información, formación y autoridad real, no solo buenas intenciones (Bowen y Lawler, 1992).':'No invertiste en empowerment. Cuando surgió la queja, tu personal no tenía herramientas ni autoridad para resolver en el primer contacto.'});
+  S.decisions.forEach(d=>it.push({t:d.tag,h:'Elegiste: '+d.choice,ok:d.ok>=1,p:d.fb}));
+  const c=cost<=BUDGET;
+  it.push({t:'Rentabilidad',h:c?'Te mantuviste dentro del presupuesto':'Te pasaste del presupuesto',ok:c,
+    p:`Gastaste ${money(cost)} de ${money(BUDGET)}. El reto del gerente de servicios es equilibrar la <b>satisfacción</b> con el <b>costo</b>: la excelencia que quiebra el negocio no es sostenible.`});
+  it.push({t:'Para tu reflexión',h:'Pregunta para la puesta en común',ok:true,
+    p:`¿Qué tiene en común <b>${b.n}</b> con el negocio de otra persona de la clase? Pensá en capacidad, momentos de la verdad, ambiente y personal. Llevá tu respuesta a la clase.`});
+  return it.map(x=>`<div class="it"><div class="t">${x.t}</div><h5 class="${x.ok?'ok':'ko'}">${x.ok?'✓':'✗'} ${x.h}</h5><p>${x.p}</p></div>`).join('');
+}
+
+/* =========================================================
+   PANEL DOCENTE
+   ========================================================= */
+let lastRows=[];
+function initProfe(){
+  show('s-profe'); $('topInfo').textContent='Panel docente';
+  $('pGo').onclick=()=>{
+    const codes=$('pCodes').value.match(/TN1\.[A-Za-z0-9+/=]+\.[a-z0-9]+/g)||[];
+    const best={}, bad=[];
+    codes.forEach(cd=>{
+      const [,b64,hs]=cd.split('.');
+      if(hash(b64+SALT)!==hs){bad.push(cd);return;}
+      try{ const o=dec(b64); const k=o.n; if(!best[k]){best[k]={...o,n_int:0};} best[k].n_int++; if(o.sc>best[k].sc) best[k]={...o,n_int:best[k].n_int}; }catch(e){bad.push(cd);}
+    });
+    const rows=Object.values(best).sort((x,y)=>y.sc-x.sc); lastRows=rows;
+    const miss=B.filter(b=>!best[b.s]).map(b=>b.s);
+    $('pOut').innerHTML=`<table><thead><tr><th>#</th><th>Estudiante</th><th>Negocio</th><th>Puntaje</th><th>★</th><th>Atend.</th><th>Perd.</th><th>Costo</th><th>Intentos</th><th>Fecha</th></tr></thead><tbody>
+      ${rows.map((r,i)=>`<tr class="${i<3?'gold':''}"><td>${i+1}</td><td>${r.n}</td><td>${B[r.b].e} ${B[r.b].n}</td><td><b>${r.sc}</b></td><td>${r.st}</td><td>${r.at}</td><td>${r.lo}</td><td>${money(r.co)}</td><td>${r.n_int}</td><td>${r.d.replace('T',' ')}</td></tr>`).join('')}
+      </tbody></table>
+      ${bad.length?`<p class="ko" style="margin-top:12px">⚠ ${bad.length} código(s) inválido(s) o alterado(s).</p>`:''}
+      ${miss.length?`<p class="sub" style="margin-top:12px">Sin entregar (${miss.length}): ${miss.join(', ')}</p>`:''}`;
+  };
+  $('pCsv').onclick=()=>{
+    if(!lastRows.length) return;
+    const csv='Posicion,Estudiante,Negocio,Puntaje,Estrellas,Atendidos,Perdidos,Costo,Intentos,Fecha\n'+lastRows.map((r,i)=>[i+1,r.n,B[r.b].n,r.sc,r.st,r.at,r.lo,r.co,r.n_int,r.d].map(x=>`"${x}"`).join(',')).join('\n');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'})); a.download='ranking-turno-de-noche.csv'; a.click();
+  };
+}
+
+if(Q.has('profe')) initProfe(); else initStart();
+</script>
+</body>
+</html>
